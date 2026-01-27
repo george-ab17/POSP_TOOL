@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POSP Payout Checker – Srinithi Insurance Corporation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #e3f2fd; /* Light blue background */
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .main-title {
+            text-align: center;
+            color: #1976d2; /* Blue color */
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e3f2fd; /* Light blue border */
+            padding-bottom: 10px;
+        }
+        .section-title {
+            color: #1976d2; /* Blue */
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #424242; /* Dark gray */
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #1976d2; /* Blue border */
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .rto-code {
+            display: flex;
+            align-items: center;
+        }
+        .rto-prefix {
+            padding: 8px;
+            border: 1px solid #1976d2; /* Blue border */
+            border-radius: 4px 0 0 4px;
+            background-color: #e3f2fd; /* Light blue */
+            width: 50px;
+            text-align: center;
+            font-weight: bold;
+            color: #1976d2; /* Blue text */
+        }
+        .rto-number {
+            padding: 8px;
+            border: 1px solid #1976d2; /* Blue border */
+            border-left: none;
+            border-radius: 0 4px 4px 0;
+            flex: 1;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #1976d2; /* Blue */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1565c0; /* Darker blue */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/static/logo/dark-logo-min.png" alt="Srinithi Insurance Corporation Logo" style="display: block; margin: 0 auto 20px; max-width: 200px; height: auto;">
+        <div class="main-title">POSP Payout Checker:</div>
+        
+        <form action="/check-payout" method="post">
+        <div class="section">
+            <div class="section-title">Location:</div>
+            <div class="form-group">
+                <label for="state">State:</label>
+                <select id="state" name="state">
+                    <option value="" selected>-- Choose State --</option>
+                    <option value="TN">Tamil Nadu</option>
+                    <option value="KA">Karnataka</option>
+                    <option value="KL">Kerala</option>
+                    <option value="AP">Andhra Pradesh</option>
+                    <option value="TS">Telangana</option>
+                    <option value="MH">Maharashtra</option>
+
+                </select>
+            </div>
+            <div class="form-group">
+                <label>RTO Code:</label>
+                <div class="rto-code">
+                    <span id="rto-prefix" class="rto-prefix">XX</span>
+                    <select id="rto-number" name="rto_number" class="rto-number">
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                        <option value="26">26</option>
+                        <option value="27">27</option>
+                        <option value="28">28</option>
+                        <option value="29">29</option>
+                        <option value="30">30</option>
+                        <option value="31">31</option>
+                        <option value="32">32</option>
+                        <option value="33">33</option>
+                        <option value="34">34</option>
+                        <option value="35">35</option>
+                        <option value="36">36</option>
+                        <option value="37">37</option>
+                        <option value="38">38</option>
+                        <option value="39">39</option>
+                        <option value="40">40</option>
+                        <option value="41">41</option>
+                        <option value="42">42</option>
+                        <option value="43">43</option>
+                        <option value="44">44</option>
+                        <option value="45">45</option>
+                        <option value="46">46</option>
+                        <option value="47">47</option>
+                        <option value="48">48</option>
+                        <option value="49">49</option>
+                        <option value="50">50</option>
+                        <option value="51">51</option>
+                        <option value="52">52</option>
+                        <option value="53">53</option>
+                        <option value="54">54</option>
+                        <option value="55">55</option>
+                        <option value="56">56</option>
+                        <option value="57">57</option>
+                        <option value="58">58</option>
+                        <option value="59">59</option>
+                        <option value="60">60</option>
+                        <option value="61">61</option>
+                        <option value="62">62</option>
+                        <option value="63">63</option>
+                        <option value="64">64</option>
+                        <option value="65">65</option>
+                        <option value="66">66</option>
+                        <option value="67">67</option>
+                        <option value="68">68</option>
+                        <option value="69">69</option>
+                        <option value="70">70</option>
+                        <option value="71">71</option>
+                        <option value="72">72</option>
+                        <option value="73">73</option>
+                        <option value="74">74</option>
+                        <option value="75">75</option>
+                        <option value="76">76</option>
+                        <option value="77">77</option>
+                        <option value="78">78</option>
+                        <option value="79">79</option>
+                        <option value="80">80</option>
+                        <option value="81">81</option>
+                        <option value="82">82</option>
+                        <option value="83">83</option>
+                        <option value="84">84</option>
+                        <option value="85">85</option>
+                        <option value="86">86</option>
+                        <option value="87">87</option>
+                        <option value="88">88</option>
+                        <option value="89">89</option>
+                        <option value="90">90</option>
+                        <option value="91">91</option>
+                        <option value="92">92</option>
+                        <option value="93">93</option>
+                        <option value="94">94</option>
+                        <option value="95">95</option>
+                        <option value="96">96</option>
+                        <option value="97">97</option>
+                        <option value="98">98</option>
+                        <option value="99">99</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Vehicle Classification:</div>
+            <div class="form-group">
+                <label for="vehicle-category">Vehicle Category:</label>
+                <select id="vehicle-category" name="vehicle_category">
+                    <option value="" selected>-- Choose Vehicle Category --</option>
+                    <option value="two-wheeler">Two-Wheeler</option>
+                    <option value="private-car">Private Car</option>
+                    <option value="gcv">GCV (Goods Carrying Vehicle)</option>
+                    <option value="pcv">PCV (Passenger Carrying Vehicle)</option>
+                    <option value="misc">Misc</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="vehicle-type">Vehicle Sub-Category:</label>
+                <select id="vehicle-type" name="vehicle_type">
+                </select>
+            </div>
+            <div class="form-group" id="seating-group" style="display: none;">
+                <label for="seating-capacity">Seating Capacity:</label>
+                <select id="seating-capacity" name="seating_capacity">
+                    <option value="" selected>-- Choose Seating Capacity --</option>
+                    <option value="up-6">Up to 6 Seats</option>
+                    <option value="7-12">7 to 12 Seats</option>
+                    <option value="13-17">13 to 17 Seats</option>
+                    <option value="above-17">Above 17 Seats</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fuel-type">Fuel Type:</label>
+                <select id="fuel-type" name="fuel_type">
+                    <option value="" selected>-- Choose Fuel Type --</option>
+                </select>
+            </div>
+            <div class="form-group" id="cc-group" style="display: none;">
+                <label for="cc-slab">CC Slab:</label>
+                <select id="cc-slab" name="cc_slab">
+                    <option value="" selected>-- Choose CC Slab --</option>
+                    <option value="upto-150">Up to 150 CC</option>
+                    <option value="151-350">151 to 350 CC</option>
+                    <option value="above-350">Above 350 CC</option>
+                </select>
+            </div>
+            <div class="form-group" id="gvw-group" style="display: none;">
+                <label for="gvw-slab">GVW Slab:</label>
+                <select id="gvw-slab" name="gvw_slab">
+                    <option value="" selected>-- Choose GVW Slab --</option>
+                    <option value="upto-7500">Up to 7500 kg</option>
+                    <option value="7501-12000">7501 to 12000 kg</option>
+                    <option value="above-12000">Above 12000 kg</option>
+                </select>
+            </div>
+            <div class="form-group" id="watt-group" style="display: none;">
+                <label for="watt-slab">Watt Slab:</label>
+                <select id="watt-slab" name="watt_slab">
+                    <option value="" selected>-- Choose Watt Slab --</option>
+                    <option value="upto-250">Up to 250 W</option>
+                    <option value="above-250">Above 250 W</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Vehicle Age:</div>
+            <div class="form-group">
+                <label for="vehicle-age">Vehicle Age Category:</label>
+                <select id="vehicle-age" name="vehicle_age">
+                    <option value="">-- Choose Age Category --</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Policy Details:</div>
+            <div class="form-group">
+                <label for="policy-type">Policy Type:</label>
+                <select id="policy-type" name="policy_type">
+                    <option value="">-- Choose Policy Type --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="business-type">Business Type:</label>
+                <select id="business-type" name="business_type">
+                    <option value="">-- Choose Business Type --</option>
+                    <option value="new">New</option>
+                    <option value="rollover">Rollover</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Risk History:</div>
+            <div class="form-group">
+                <label for="claim-status">Claim Status:</label>
+                <select id="claim-status" name="claim_status">
+                    <option value="">-- Choose Claim Status --</option>
+                    <option value="claim">Claim</option>
+                    <option value="no-claim">No Claim</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ncb-slab">NCB Slab:</label>
+                <select id="ncb-slab" name="ncb_slab">
+                    <option value="">-- Choose NCB Slab --</option>
+                    <option value="0">0%</option>
+                    <option value="20">20%</option>
+                    <option value="35">35%</option>
+                    <option value="50">50%</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Covers & Flags:</div>
+            <div class="form-group">
+                <label for="cpa-cover">CPA Cover:</label>
+                <select id="cpa-cover" name="cpa_cover">
+                    <option value="">-- Choose --</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="zero-dep">Zero Depreciation:</label>
+                <select id="zero-dep" name="zero_dep">
+                    <option value="">-- Choose --</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="financer">Financer / Hypothecation:</label>
+                <select id="financer" name="financer">
+                    <option value="">-- Choose --</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <div class="form-group" id="trailer-group" style="display: none;">
+                <label for="trailer">Trailer Attached:</label>
+                <select id="trailer" name="trailer">
+                    <option value="">-- Choose --</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit">Calculate Payout</button>
+
+    <script>
+        // RTO Master Data
+        const rtoData = {
+            'TN': {
+                '01': 'CHENNAI CENTRAL RTO',
+                '02': 'CHENNAI (NORTH WEST) RTO',
+                '03': 'CHENNAI (NORTH EAST) RTO',
+                '04': 'CHENNAI (EAST) RTO',
+                '05': 'CHENNAI (NORTH) RTO',
+                '06': 'CHENNAI (SOUTH-EAST) RTO',
+                '07': 'CHENNAI (SOUTH) RTO',
+                '09': 'CHENNAI WEST RTO',
+                '10': 'CHENNAI (SOUTH-WEST) RTO',
+                '11': 'TAMBARAM RTO',
+                '12': 'PARUTHIPATTU RTO',
+                '13': 'AMBATTUR RTO',
+                '14': 'SHOLINGANALLUR RTO',
+                '15': 'ULUNDURPET RTO',
+                '15M': 'KALAKURICHI RTO',
+                '16': 'TINDIVANAM RTO',
+                '18': 'REDHILLS RTO',
+                '19': 'CHENGALPATTU RTO',
+                '20': 'THIRUVALLUR RTO',
+                '21': 'KANCHIPURAM RTO',
+                '22': 'MEENAMBAKKAM RTO',
+                '23': 'VELLORE RTO',
+                '24': 'KRISHNAGIRI RTO',
+                '25': 'TIRUVANNAMALAI RTO',
+                '28': 'NAMAKKAL (NORTH) RTO',
+                '29': 'DHARMAPURI RTO',
+                '30': 'SALEM (WEST) RTO',
+                '31': 'CUDDALORE RTO',
+                '32': 'VILUPPURAM RTO',
+                '33': 'ERODE EAST RTO',
+                '34': 'TIRUCHENGODE RTO',
+                '36': 'GOBI RTO',
+                '37': 'COIMBATORE (SOUTH) RTO',
+                '38': 'COIMBATORE NORTH RTO',
+                '39': 'TIRUPUR NORTH RTO',
+                '40': 'METTUPALAYAM RTO',
+                '41': 'POLLACHI RTO',
+                '42': 'TIRUPUR SOUTH RTO',
+                '43': 'OOTY RTO',
+                '45': 'TRICHY WEST RTO',
+                '46': 'PERAMBALUR RTO',
+                '47': 'KARUR RTO',
+                '48': 'SRIRANGAM RTO',
+                '49': 'THANJAVUR RTO',
+                '50': 'TIRUVARUR RTO',
+                '51': 'NAGAPATTINAM RTO',
+                '52': 'SANKAGIRI RTO',
+                '54': 'SALEM (EAST) RTO',
+                '55': 'PUDUKKOTTAI RTO',
+                '56': 'PERUNDURAI RTO',
+                '57': 'DINDIGUL RTO',
+                '58': 'MADURAI (SOUTH) RTO',
+                '59': 'MADURAI (NORTH) RTO',
+                '60': 'THENI RTO',
+                '61': 'ARIYALUR RTO',
+                '63': 'SIVAGANGAI RTO',
+                '64': 'MADURAI (CENTRAL) RTO',
+                '65': 'RAMANATHAPURAM RTO',
+                '66': 'COIMBATORE (CENTRAL) RTO',
+                '67': 'VIRUDHUNAGAR RTO',
+                '68': 'KUMBAKONAM RTO',
+                '69': 'TUTICORIN RTO',
+                '70': 'HOSUR RTO',
+                '72': 'TIRUNELVELI RTO',
+                '73': 'RANIPET RTO',
+                '74': 'NAGERCOIL RTO',
+                '75': 'MARTHANDAM RTO',
+                '76': 'TENKASI RTO',
+                '77': 'ATTUR RTO',
+                '78': 'DHARAPURAM RTO',
+                '79': 'SANKARANKOVIL RTO',
+                '81': 'TRICHY (EAST) RTO',
+                '82': 'MAYILADUTHURAI RTO',
+                '83': 'VANIYAMBADI RTO',
+                '83M': 'TIRUPATTUR RTO',
+                '84': 'SRIVILLIPUTTUR RTO',
+                '85': 'KUNDRATHUR RTO',
+                '86': 'ERODE WEST RTO',
+                '87': 'SRIPERUMBUDUR RTO',
+                '88': 'NAMAKKAL SOUTH RTO',
+                '90': 'SALEM (SOUTH) RTO',
+                '91': 'CHIDHAMBARAM RTO',
+                '92': 'THIRUCHENDUR RTO',
+                '93': 'METTUR RTO',
+                '94': 'PALANI RTO',
+                '95': 'SIVAKASI RTO',
+                '96': 'KOVILPATTI RTO',
+                '97': 'ARANI RTO',
+                '99': 'COIMBATORE (WEST) RTO'
+            },
+            'KA': {
+                '01': 'Koramangala',
+                '02': 'Rajajinagar',
+                '03': 'Indiranagar',
+                '04': 'Yeshwanthpur',
+                '05': 'Jayanagar',
+                '06': 'Tumkur',
+                '07': 'Kolar',
+                '08': 'Kolar Gold Fields',
+                '09': 'Mysuru',
+                '10': 'Chamarajanagar',
+                '11': 'Mandya',
+                '12': 'Madikeri',
+                '13': 'Hassan',
+                '14': 'Shivamogga',
+                '15': 'Sagara',
+                '16': 'Chitradurga',
+                '17': 'Davanagere',
+                '18': 'Chikkamagaluru',
+                '19': 'Mangaluru',
+                '20': 'Udupi',
+                '21': 'Puttur',
+                '22': 'Belagavi',
+                '23': 'Chikkodi',
+                '24': 'Bailhongal',
+                '25': 'Dharwad',
+                '26': 'Gadag',
+                '27': 'Haveri',
+                '28': 'Vijayapura',
+                '29': 'Bagalkote',
+                '30': 'Karwar',
+                '31': 'Sirsi',
+                '32': 'Kalaburagi',
+                '33': 'Yadgir',
+                '34': 'Ballari',
+                '35': 'Hosapete',
+                '36': 'Raichur',
+                '37': 'Koppal',
+                '38': 'Bidar',
+                '39': 'Bhalki',
+                '40': 'Chikkaballapura',
+                '41': 'Jnana Bharathi',
+                '42': 'Ramanagara',
+                '43': 'Devanahalli',
+                '44': 'Tiptur',
+                '45': 'Hunsur',
+                '46': 'Sakleshpura',
+                '47': 'Honnavar',
+                '48': 'Jamkhandi',
+                '49': 'Gokak',
+                '50': 'Yelahanka',
+                '51': 'Electronic City',
+                '52': 'Nelamangala',
+                '53': 'KR Puram',
+                '57': 'Shantinagar',
+                '58': 'Chamrajpet',
+                '59': 'Chandapura',
+                '60': 'RT Nagar',
+                '61': 'Marathahalli',
+                '63': 'Dharwad East',
+                '64': 'Madhugiri',
+                '65': 'Dandeli',
+                '66': 'Tarikere',
+                '67': 'Chintamani',
+                '68': 'Ranebennur',
+                '69': 'Ramdurg',
+                '70': 'Bantwal',
+                '71': 'Athani'
+            },
+            'KL': {
+                '01': 'Thiruvananthapuram',
+                '02': 'Kollam',
+                '03': 'Pathanamthitta',
+                '04': 'Alappuzha',
+                '05': 'Kottayam',
+                '06': 'Idukki',
+                '07': 'Ernakulam',
+                '08': 'Thrissur',
+                '09': 'Palakkad',
+                '10': 'Malappuram',
+                '11': 'Kozhikode',
+                '12': 'Wayanad',
+                '13': 'Kannur',
+                '14': 'Kasargode',
+                '15': 'Kerala',
+                '16': 'Attingal',
+                '17': 'Muvattupuzha',
+                '18': 'Vadakara',
+                '19': 'Parassala',
+                '20': 'Neyyattinkara',
+                '21': 'Nedumangad',
+                '22': 'Kazhakkoottam',
+                '23': 'Karunagapally',
+                '24': 'Kottarakara',
+                '25': 'Punalur',
+                '26': 'Adoor',
+                '28': 'Mallappally',
+                '29': 'Kayamkulam',
+                '30': 'Chengannur',
+                '31': 'Mavelikara',
+                '32': 'Cherthala',
+                '33': 'Changanassery',
+                '34': 'Kanjirappally',
+                '35': 'Pala',
+                '36': 'Vaikom',
+                '37': 'Vandiperiyar',
+                '38': 'Thodupuzha',
+                '39': 'Thripunithura',
+                '40': 'Perumbavoor',
+                '41': 'Aluva',
+                '42': 'North Paravur',
+                '43': 'Mattancherry',
+                '44': 'Kothamangalam',
+                '45': 'Irinjalakuda',
+                '46': 'Guruvayur',
+                '47': 'Kodungallur',
+                '48': 'Wadakkancherry',
+                '49': 'Alathur',
+                '50': 'Mannarghat',
+                '51': 'Ottappalam',
+                '52': 'Pattambi',
+                '53': 'Perinthalmanna',
+                '54': 'Ponnani',
+                '55': 'Tirur',
+                '56': 'Koyilandi',
+                '57': 'Koduvally',
+                '58': 'Thalassery',
+                '59': 'Thaliparamba',
+                '60': 'Kanhangad',
+                '61': 'Kunnathur',
+                '62': 'Ranni',
+                '63': 'Angamaly',
+                '64': 'Chalakkudy',
+                '65': 'Thirurangadi',
+                '66': 'Kuttanadu',
+                '67': 'Uzhavoor',
+                '68': 'Devikulam',
+                '69': 'Udumbanchola',
+                '70': 'Chittur',
+                '71': 'Nilambur',
+                '72': 'Mananthavady',
+                '73': 'Sulthan Bathery'
+            },
+            'AP': {
+                '01': 'Adilabad',
+                '02': 'Anantapur',
+                '03': 'Chittoor',
+                '04': 'Kadapa',
+                '05': 'Kakinada',
+                '06': 'Kakinada',
+                '07': 'Guntur',
+                '08': 'Guntur',
+                '09': 'Hyderabad Central',
+                '10': 'Hyderabad North',
+                '11': 'Hyderabad East',
+                '12': 'Hyderabad South',
+                '13': 'Hyderabad West',
+                '14': 'Hyderabad',
+                '15': 'Karimnagar',
+                '16': 'Vijayawada',
+                '17': 'Vijayawada',
+                '18': 'Vijayawada',
+                '19': 'Vijayawada',
+                '20': 'Khammam',
+                '21': 'Kurnool',
+                '22': 'Mahbubnagar',
+                '23': 'Medak',
+                '24': 'Nalgonda',
+                '25': 'Nizamabad',
+                '26': 'Nellore',
+                '27': 'Ongole',
+                '28': 'Ranga Reddy',
+                '29': 'Ranga Reddy',
+                '30': 'Srikakulam',
+                '31': 'Visakhapatnam',
+                '32': 'Visakhapatnam',
+                '33': 'Gajuwaka',
+                '35': 'Vizianagaram',
+                '36': 'Warangal',
+                '37': 'Eluru'
+            },
+            'MH': {
+                '01': 'Mumbai (South) - Tardeo',
+                '02': 'Mumbai (West) - Andheri',
+                '03': 'Mumbai (East) - Ghatkopar',
+                '04': 'Thane',
+                '05': 'Kalyan',
+                '06': 'Raigad',
+                '07': 'Sindhudurg Nagari',
+                '08': 'Ratnagiri',
+                '09': 'Kolhapur',
+                '10': 'Sangli',
+                '11': 'Satara',
+                '12': 'Pune',
+                '13': 'Solapur',
+                '14': 'Pimpri Chinchwad',
+                '16': 'Ahmednagar',
+                '17': 'Shrirampur - Ahmednagar',
+                '18': 'Dhule',
+                '19': 'Jalgaon',
+                '20': 'Aurangabad',
+                '21': 'Jalna',
+                '22': 'Parbhani',
+                '23': 'Beed',
+                '24': 'Latur',
+                '25': 'Osmanabad',
+                '26': 'Nanded',
+                '27': 'Amravati',
+                '28': 'Buldana',
+                '29': 'Yavatmal',
+                '30': 'Akola',
+                '31': 'Nagpur',
+                '33': 'Gadchiroli',
+                '34': 'Chandrapur',
+                '35': 'Gondia',
+                '36': 'Bhandara',
+                '37': 'Washim',
+                '38': 'Hingoli',
+                '39': 'Nandurbar',
+                '40': 'Wadi Nagpur',
+                '41': 'Malegaon - Nashik District',
+                '42': 'Baramati - Pune',
+                '43': 'Vashi (Sanpada)',
+                '44': 'Ambejogai Beed',
+                '45': 'Akluj - Solapur',
+                '46': 'Panvel',
+                '47': 'Borivali',
+                '48': 'Vasai - Virar',
+                '49': 'Nagpur (East) - Bhandara Road',
+                '50': 'Karad',
+                '51': 'Sangamner - Ahmednagar',
+                '52': 'Parbhani (Rural)',
+                '53': 'Pune South',
+                '54': 'Pune North',
+                '55': 'Mumbai Central',
+                '56': 'Thane Rural'
+            },
+            'TS': {
+                '01': 'Adilabad',
+                '02': 'Karimnagar',
+                '03': 'Warangal',
+                '04': 'Khammam',
+                '05': 'Nalgonda',
+                '06': 'Mahbubnagar',
+                '07': 'Ranga Reddy',
+                '08': 'Ranga Reddy',
+                '09': 'Hyderabad Central',
+                '10': 'Hyderabad North',
+                '11': 'Hyderabad East',
+                '12': 'Hyderabad South',
+                '13': 'Hyderabad West',
+                '14': 'Hyderabad',
+                '15': 'Medak',
+                '16': 'Nizamabad'
+            }
+        };
+
+        // Age Slabs based on Vehicle Category and Sub-Category (from reference data)
+        const ageSlabs = {
+            'bike': ['NEW', 'upto 5 years', '6 to 10 years', '6 to 15 years', 'Above 5 years', 'Above 10 years'],
+            'scooter': ['NEW', 'upto 5 years', '6 to 10 years', '6 to 15 years', 'Above 5 years', 'Above 10 years'],
+            'private-car': ['NEW', 'upto 9 years', 'upto 14 years', 'upto 15 years', '4 to 15 years', '4 to 20 years', '4-20 yrs', '6 to 14 years', 'Upto 20 years', '4 to 25 years'],
+            'auto': ['NEW', 'upto 5 years', '6 to 15 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'Upto 20 years', 'OLD upto 15 years & upto 30 Years for STP'],
+            'taxi': ['NEW', 'upto 5 years', '6 to 15 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'Upto 20 years', 'OLD upto 15 years & upto 30 Years for STP'],
+            'educational-bus': ['NEW', 'upto 5 years', '6 to 15 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'Upto 20 years', 'OLD upto 15 years & upto 30 Years for STP'],
+            'staff-bus': ['NEW', 'upto 5 years', '6 to 15 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'Upto 20 years', 'OLD upto 15 years & upto 30 Years for STP'],
+            '3-wheeler-goods': ['3 to 9 years', 'Upto 4 years', 'upto 5 years', '5 to 10 years', '5 to 15 years', '6 to 15 years', '9 to 15 years', 'upto 6 years', 'upto 10 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'upto 20 years & upto 25 Years for STP', 'upto 22 years', 'upto 25 Years for STP', 'upto 15 years & upto 30 Years for STP'],
+            '4-wheeler-goods': ['3 to 9 years', 'Upto 4 years', 'upto 5 years', '5 to 10 years', '5 to 15 years', '6 to 15 years', '9 to 15 years', 'upto 6 years', 'upto 10 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'upto 20 years & upto 25 Years for STP', 'upto 22 years', 'upto 25 Years for STP', 'upto 15 years & upto 30 Years for STP'],
+            'flatbed': ['3 to 9 years', 'Upto 4 years', 'upto 5 years', '5 to 10 years', '5 to 15 years', '6 to 15 years', '9 to 15 years', 'upto 6 years', 'upto 10 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'upto 20 years & upto 25 Years for STP', 'upto 22 years', 'upto 25 Years for STP', 'upto 15 years & upto 30 Years for STP'],
+            'tractor': ['NEW', 'upto 10 years', 'upto 15 years', 'OLD (Age upto 15 years)'],
+            'other-misc-vehicles': ['NEW', 'upto 10 years', 'upto 15 years', 'OLD (Age upto 15 years)']
+        };
+
+        const stateSelect = document.getElementById('state');
+        const rtoPrefix = document.getElementById('rto-prefix');
+        const rtoNumberSelect = document.getElementById('rto-number');
+        const vehicleCategorySelect = document.getElementById('vehicle-category');
+        const vehicleTypeSelect = document.getElementById('vehicle-type');
+        const vehicleAgeSelect = document.getElementById('vehicle-age');
+        const fuelTypeSelect = document.getElementById('fuel-type');
+        const ccGroup = document.getElementById('cc-group');
+        const gvwGroup = document.getElementById('gvw-group');
+        const wattGroup = document.getElementById('watt-group');
+        const seatingGroup = document.getElementById('seating-group');
+        const trailerGroup = document.getElementById('trailer-group');
+        const policyTypeSelect = document.getElementById('policy-type');
+        const claimStatusSelect = document.getElementById('claim-status');
+        const ncbSlabSelect = document.getElementById('ncb-slab');
+        const ccSlabSelect = document.getElementById('cc-slab');
+        const seatingCapacitySelect = document.getElementById('seating-capacity');
+
+        // Function to update policy types based on vehicle category
+        function updatePolicyTypes(category) {
+            policyTypeSelect.innerHTML = '<option value="">-- Choose Policy Type --</option>';
+            let policyOptions = [];
+            
+            if (category === 'two-wheeler' || category === 'private-car') {
+                policyOptions = ['Comprehensive (1+1)', 'SATP', 'Bundle (1+5)', 'SAOD'];
+            } else if (category === 'gcv') {
+                policyOptions = ['Comprehensive (1+1)', 'SATP'];
+            } else if (category === 'pcv' || category === 'misc') {
+                policyOptions = ['Comprehensive (1+1)', 'SATP'];
+            } else {
+                policyOptions = ['Comprehensive (1+1)', 'SATP'];
+            }
+            
+            policyOptions.forEach(policy => {
+                const option = document.createElement('option');
+                option.value = policy.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '');
+                option.textContent = policy;
+                policyTypeSelect.appendChild(option);
+            });
+        }
+
+        // RTO prefix update and populate RTO names
+        stateSelect.addEventListener('change', function() {
+            const selectedState = this.value;
+            if (selectedState) {
+                rtoPrefix.textContent = selectedState;
+                
+                // Populate RTO numbers with names - sorted in ascending order
+                rtoNumberSelect.innerHTML = '';
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = '-- Choose RTO Code --';
+                placeholder.selected = true;
+                rtoNumberSelect.appendChild(placeholder);
+                const rtos = rtoData[selectedState];
+                
+                // Sort RTO codes in ascending order (numeric sorting with special handling)
+                const sortedCodes = Object.keys(rtos).sort((a, b) => {
+                    const numA = parseInt(a);
+                    const numB = parseInt(b);
+                    if (numA !== numB) {
+                        return numA - numB;  // Sort by numeric value
+                    }
+                    // If numeric parts are equal, sort alphabetically (e.g., '15' before '15M')
+                    return a.localeCompare(b);
+                });
+                
+                for (const code of sortedCodes) {
+                    const name = rtos[code];
+                    const option = document.createElement('option');
+                    option.value = code;
+                    option.textContent = `${code} - ${name}`;
+                    rtoNumberSelect.appendChild(option);
+                }
+                rtoNumberSelect.selectedIndex = 0;
+                rtoNumberSelect.value = '';
+                rtoNumberSelect.options[0].selected = true;
+            } else {
+                rtoPrefix.textContent = 'XX';
+                rtoNumberSelect.innerHTML = '';
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = '-- Choose RTO Code --';
+                rtoNumberSelect.appendChild(placeholder);
+            }
+        });
+
+        // Vehicle Category change event
+        vehicleCategorySelect.addEventListener('change', function() {
+            const category = this.value;
+            vehicleTypeSelect.innerHTML = '';
+            const defaultType = document.createElement('option');
+            defaultType.value = '';
+            defaultType.textContent = '-- Choose Vehicle Sub-Category --';
+            vehicleTypeSelect.appendChild(defaultType);
+            let options = [];
+            if (category === 'two-wheeler') {
+                options = ['Bike', 'Scooter'];
+            } else if (category === 'private-car') {
+                options = ['Private Car'];
+            } else if (category === 'gcv') {
+                options = ['3 Wheeler Goods', '4 Wheeler Goods', 'Flatbed'];
+            } else if (category === 'pcv') {
+                options = ['Auto', 'Taxi', 'Educational Bus', 'Staff Bus'];
+            } else if (category === 'misc') {
+                options = ['Tractor', 'Other Misc Vehicles'];
+            }
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt.replace(/\s+/g, '-').toLowerCase();
+                option.textContent = opt;
+                vehicleTypeSelect.appendChild(option);
+            });
+
+            // Update Fuel Type based on Category
+            fuelTypeSelect.innerHTML = '';
+            const defaultFuel = document.createElement('option');
+            defaultFuel.value = '';
+            defaultFuel.textContent = '-- Choose Fuel Type --';
+            fuelTypeSelect.appendChild(defaultFuel);
+            let fuelOptions = [];
+            if (category === 'two-wheeler') {
+                fuelOptions = ['Petrol', 'Electric'];
+            } else if (category === 'misc') {
+                fuelOptions = ['Petrol', 'Diesel'];
+            } else {
+                fuelOptions = ['Petrol', 'Diesel', 'CNG', 'Electric'];
+            }
+            fuelOptions.forEach(fuel => {
+                const option = document.createElement('option');
+                option.value = fuel.toLowerCase();
+                option.textContent = fuel;
+                fuelTypeSelect.appendChild(option);
+            });
+
+            // Update CC Slab based on Category
+            ccSlabSelect.innerHTML = '';
+            const defaultCC = document.createElement('option');
+            defaultCC.value = '';
+            defaultCC.textContent = '-- Choose CC Slab --';
+            ccSlabSelect.appendChild(defaultCC);
+            let ccOptions = [];
+            if (category === 'two-wheeler') {
+                ccOptions = ['Up to 150 CC', '151 to 350 CC', 'Above 350 CC'];
+            } else if (category === 'private-car') {
+                ccOptions = ['Up to 1500 CC', '1501 to 2500 CC', 'Above 2500 CC'];
+            }
+            ccOptions.forEach(cc => {
+                const option = document.createElement('option');
+                option.value = cc.toLowerCase().replace(/\s+/g, '-').replace(/cc/g, '').replace(/to/g, '-to-');
+                option.textContent = cc;
+                ccSlabSelect.appendChild(option);
+            });
+
+            // Show capacity based on category
+            ccGroup.style.display = (category === 'two-wheeler' || category === 'private-car') ? 'block' : 'none';
+            gvwGroup.style.display = (category === 'gcv') ? 'block' : 'none';
+            wattGroup.style.display = 'none'; // Will be shown based on fuel type
+            seatingGroup.style.display = 'none'; // Will be shown based on vehicle type for PCV
+            trailerGroup.style.display = (category === 'gcv') ? 'block' : 'none';
+
+            // Update policy types based on category
+            updatePolicyTypes(category);
+
+            // Reset vehicle age when category changes
+            vehicleAgeSelect.innerHTML = '<option value="">-- Choose Age Category --</option>';
+        });
+
+        // Vehicle Type change event
+        vehicleTypeSelect.addEventListener('change', function() {
+            const selectedType = this.value;
+            const category = vehicleCategorySelect.value;
+            if (selectedType && ageSlabs[selectedType]) {
+                vehicleAgeSelect.innerHTML = '<option value="">-- Choose Age Category --</option>';
+                const ages = ageSlabs[selectedType];
+                ages.forEach(age => {
+                    const option = document.createElement('option');
+                    option.value = age.toLowerCase().replace(/\s+/g, '-');
+                    option.textContent = age;
+                    vehicleAgeSelect.appendChild(option);
+                });
+            }
+            // Handle seating for PCV
+            if (category === 'pcv') {
+                if (selectedType === 'auto') {
+                    seatingGroup.style.display = 'none';
+                } else {
+                    seatingGroup.style.display = 'block';
+                    seatingCapacitySelect.innerHTML = '';
+                    const defaultSeat = document.createElement('option');
+                    defaultSeat.value = '';
+                    defaultSeat.textContent = '-- Choose Seating Capacity --';
+                    seatingCapacitySelect.appendChild(defaultSeat);
+                    let seatOptions = [];
+                    if (selectedType === 'taxi') {
+                        seatOptions = ['Up to 6 Seats', '7 to 12 Seats'];
+                    } else if (selectedType === 'educational-bus' || selectedType === 'staff-bus') {
+                        seatOptions = ['Up to 12 Seats', '13 to 17 Seats', 'Above 17 Seats'];
+                    }
+                    seatOptions.forEach(seat => {
+                        const option = document.createElement('option');
+                        option.value = seat.toLowerCase().replace(/\s+/g, '-').replace(/seats/g, '');
+                        option.textContent = seat;
+                        seatingCapacitySelect.appendChild(option);
+                    });
+                }
+            } else {
+                seatingGroup.style.display = 'none';
+            }
+        });
+
+        // Watt Slab based on Fuel Type
+        fuelTypeSelect.addEventListener('change', function() {
+            const fuel = this.value;
+            const category = vehicleCategorySelect.value;
+            wattGroup.style.display = (category === 'two-wheeler' && fuel === 'electric') ? 'block' : 'none';
+        });
+
+        // Claim Status - Auto-set NCB to 0% when Claim is selected
+        claimStatusSelect.addEventListener('change', function() {
+            const claimStatus = this.value;
+            if (claimStatus === 'claim') {
+                // Auto-set NCB to 0% and disable manual selection
+                ncbSlabSelect.value = '0';
+                ncbSlabSelect.disabled = true;
+            } else if (claimStatus === 'no-claim') {
+                // Enable NCB selection for No Claim
+                ncbSlabSelect.disabled = false;
+                ncbSlabSelect.value = '';  // Reset for user to select
+            } else {
+                // Reset if claim status is cleared
+                ncbSlabSelect.disabled = false;
+                ncbSlabSelect.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
