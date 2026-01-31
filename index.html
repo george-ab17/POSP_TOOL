@@ -102,6 +102,9 @@
                 <select id="state" name="state">
                     <option value="" selected>-- Choose State --</option>
                     <option value="TN">Tamil Nadu</option>
+                    <option value="PY">Puducherry (Pondicherry)</option>
+                    <option value="TN_PONDICHERRY">Tamil Nadu - Pondicherry ID</option>
+                    <option value="TN_CHENNAI">Tamil Nadu - Chennai ID</option>
                     <option value="KA">Karnataka</option>
                     <option value="KL">Kerala</option>
                     <option value="AP">Andhra Pradesh</option>
@@ -115,105 +118,6 @@
                 <div class="rto-code">
                     <span id="rto-prefix" class="rto-prefix">XX</span>
                     <select id="rto-number" name="rto_number" class="rto-number">
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
-                        <option value="23">23</option>
-                        <option value="24">24</option>
-                        <option value="25">25</option>
-                        <option value="26">26</option>
-                        <option value="27">27</option>
-                        <option value="28">28</option>
-                        <option value="29">29</option>
-                        <option value="30">30</option>
-                        <option value="31">31</option>
-                        <option value="32">32</option>
-                        <option value="33">33</option>
-                        <option value="34">34</option>
-                        <option value="35">35</option>
-                        <option value="36">36</option>
-                        <option value="37">37</option>
-                        <option value="38">38</option>
-                        <option value="39">39</option>
-                        <option value="40">40</option>
-                        <option value="41">41</option>
-                        <option value="42">42</option>
-                        <option value="43">43</option>
-                        <option value="44">44</option>
-                        <option value="45">45</option>
-                        <option value="46">46</option>
-                        <option value="47">47</option>
-                        <option value="48">48</option>
-                        <option value="49">49</option>
-                        <option value="50">50</option>
-                        <option value="51">51</option>
-                        <option value="52">52</option>
-                        <option value="53">53</option>
-                        <option value="54">54</option>
-                        <option value="55">55</option>
-                        <option value="56">56</option>
-                        <option value="57">57</option>
-                        <option value="58">58</option>
-                        <option value="59">59</option>
-                        <option value="60">60</option>
-                        <option value="61">61</option>
-                        <option value="62">62</option>
-                        <option value="63">63</option>
-                        <option value="64">64</option>
-                        <option value="65">65</option>
-                        <option value="66">66</option>
-                        <option value="67">67</option>
-                        <option value="68">68</option>
-                        <option value="69">69</option>
-                        <option value="70">70</option>
-                        <option value="71">71</option>
-                        <option value="72">72</option>
-                        <option value="73">73</option>
-                        <option value="74">74</option>
-                        <option value="75">75</option>
-                        <option value="76">76</option>
-                        <option value="77">77</option>
-                        <option value="78">78</option>
-                        <option value="79">79</option>
-                        <option value="80">80</option>
-                        <option value="81">81</option>
-                        <option value="82">82</option>
-                        <option value="83">83</option>
-                        <option value="84">84</option>
-                        <option value="85">85</option>
-                        <option value="86">86</option>
-                        <option value="87">87</option>
-                        <option value="88">88</option>
-                        <option value="89">89</option>
-                        <option value="90">90</option>
-                        <option value="91">91</option>
-                        <option value="92">92</option>
-                        <option value="93">93</option>
-                        <option value="94">94</option>
-                        <option value="95">95</option>
-                        <option value="96">96</option>
-                        <option value="97">97</option>
-                        <option value="98">98</option>
-                        <option value="99">99</option>
                     </select>
                 </div>
             </div>
@@ -235,6 +139,16 @@
             <div class="form-group">
                 <label for="vehicle-type">Vehicle Sub-Category:</label>
                 <select id="vehicle-type" name="vehicle_type">
+                </select>
+            </div>
+            <div class="form-group" id="make-group" style="display: none;">
+                <label for="make">Make:</label>
+                <select id="make" name="make">
+                </select>
+            </div>
+            <div class="form-group" id="model-group" style="display: none;">
+                <label for="model">Model:</label>
+                <select id="model" name="model">
                 </select>
             </div>
             <div class="form-group" id="seating-group" style="display: none;">
@@ -284,9 +198,16 @@
         <div class="section">
             <div class="section-title">Vehicle Age:</div>
             <div class="form-group">
-                <label for="vehicle-age">Vehicle Age Category:</label>
+                <label for="vehicle-age"><strong>Age</strong></label>
                 <select id="vehicle-age" name="vehicle_age">
-                    <option value="">-- Choose Age Category --</option>
+                    <option value="">-- Choose Vehicle Age --</option>
+                    <option value="upto 5 years">Up to 5 Years</option>
+                    <option value="1 to 6 years">1 to 6 Years</option>
+                    <option value="6 to 15 years">6 to 15 Years</option>
+                    <option value="upto 15 years">Up to 15 Years</option>
+                    <option value="Above 10 years">Above 10 Years</option>
+                    <option value="Above 15 years">Above 15 Years</option>
+                    <option value="6 to 25 years">6 to 25 Years</option>
                 </select>
             </div>
         </div>
@@ -303,30 +224,22 @@
                 <label for="business-type">Business Type:</label>
                 <select id="business-type" name="business_type">
                     <option value="">-- Choose Business Type --</option>
+                    <option value="old">Old</option>
                     <option value="new">New</option>
                     <option value="rollover">Rollover</option>
+                    <option value="renewal">Renewal</option>
                 </select>
             </div>
         </div>
         
         <div class="section">
-            <div class="section-title">Risk History:</div>
+            <div class="section-title">NCB (No Claim Bonus):</div>
             <div class="form-group">
-                <label for="claim-status">Claim Status:</label>
-                <select id="claim-status" name="claim_status">
-                    <option value="">-- Choose Claim Status --</option>
-                    <option value="claim">Claim</option>
-                    <option value="no-claim">No Claim</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="ncb-slab">NCB Slab:</label>
+                <label for="ncb-slab">NCB Applicable:</label>
                 <select id="ncb-slab" name="ncb_slab">
-                    <option value="">-- Choose NCB Slab --</option>
-                    <option value="0">0%</option>
-                    <option value="20">20%</option>
-                    <option value="35">35%</option>
-                    <option value="50">50%</option>
+                    <option value="">-- Choose --</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
                 </select>
             </div>
         </div>
@@ -349,14 +262,6 @@
                     <option value="no">No</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label for="financer">Financer / Hypothecation:</label>
-                <select id="financer" name="financer">
-                    <option value="">-- Choose --</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                </select>
-            </div>
             <div class="form-group" id="trailer-group" style="display: none;">
                 <label for="trailer">Trailer Attached:</label>
                 <select id="trailer" name="trailer">
@@ -367,10 +272,463 @@
             </div>
         </div>
         <button type="submit">Calculate Payout</button>
+        </form>
+
+        <!-- Results Section -->
+        <div id="results-section" style="display: none; margin-top: 30px;">
+            <div class="section">
+                <div class="section-title">📋 Query Criteria</div>
+                <div id="criteria-summary" style="margin: 15px 0; padding: 15px; background-color: #f5f5f5; border-left: 4px solid #2196f3; border-radius: 4px; font-size: 0.95em;">
+                </div>
+            </div>
+            <div class="section">
+                <div class="section-title">🏆 Top Insurers with Payout</div>
+                <div id="results-message" style="margin: 15px 0; padding: 10px; background-color: #e8f5e9; border-left: 4px solid #4caf50; color: #2e7d32;"></div>
+                <table id="results-table" style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <thead>
+                        <tr style="background-color: #1976d2; color: white;">
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Rank</th>
+                            <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Insurance Company & Conditions</th>
+                            <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Payout (rp)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
     <script>
-        // RTO Master Data
-        const rtoData = {
+        // ==================== UTILITY FUNCTIONS ====================
+        
+        async function fetchAPI(url) {
+            try {
+                const response = await fetch(url);
+                return await response.json();
+            } catch (error) {
+                console.error('API fetch error:', error);
+                return null;
+            }
+        }
+
+        function createOption(value, label) {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = label;
+            return option;
+        }
+
+        function clearSelect(select) {
+            select.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = '-- Choose --';
+            select.appendChild(defaultOption);
+        }
+
+        // ==================== DATABASE DROPDOWN INITIALIZATION ====================
+        
+        let formElements = {};
+
+        async function initializeDropdowns() {
+            // Get all form elements
+            formElements = {
+                state: document.getElementById('state'),
+                rtoNumber: document.getElementById('rto-number'),
+                vehicleCategory: document.getElementById('vehicle-category'),
+                vehicleType: document.getElementById('vehicle-type'),
+                fuelType: document.getElementById('fuel-type'),
+                policyType: document.getElementById('policy-type'),
+                businessType: document.getElementById('business-type'),
+                vehicleAge: document.getElementById('vehicle-age'),
+                ccSlab: document.getElementById('cc-slab'),
+                gvwSlab: document.getElementById('gvw-slab'),
+                wattSlab: document.getElementById('watt-slab'),
+                seatingCapacity: document.getElementById('seating-capacity'),
+                ncbSlab: document.getElementById('ncb-slab'),
+                cpaCover: document.getElementById('cpa-cover'),
+                zeroDep: document.getElementById('zero-dep'),
+                trailer: document.getElementById('trailer'),
+                make: document.getElementById('make'),
+                model: document.getElementById('model')
+            };
+
+            // Fetch and populate States
+            const statesData = await fetchAPI('/api/states');
+            if (statesData && statesData.states) {
+                statesData.states.forEach(state => {
+                    formElements.state.appendChild(createOption(state, state));
+                });
+            }
+
+            // Fetch and populate Policy Types
+            const policyData = await fetchAPI('/api/policy-types');
+            if (policyData && policyData.policies) {
+                policyData.policies.forEach(policy => {
+                    formElements.policyType.appendChild(createOption(policy, policy));
+                });
+            }
+
+            // Fetch and populate Business Types (excluding 'All')
+            const businessData = await fetchAPI('/api/business-types');
+            if (businessData && businessData.business_types) {
+                businessData.business_types.forEach(business => {
+                    formElements.businessType.appendChild(createOption(business, business));
+                });
+            }
+
+            // Fetch and populate Vehicle Ages (excluding 'All')
+            const ageData = await fetchAPI('/api/vehicle-ages');
+            if (ageData && ageData.ages) {
+                ageData.ages.forEach(age => {
+                    formElements.vehicleAge.appendChild(createOption(age, age));
+                });
+            }
+
+            // Fetch and populate Vehicle Categories
+            const categoryData = await fetchAPI('/api/vehicle-categories');
+            if (categoryData && categoryData.categories) {
+                categoryData.categories.forEach(category => {
+                    formElements.vehicleCategory.appendChild(createOption(category, category));
+                });
+            }
+
+            // Fetch and populate NCB Slabs
+            const ncbData = await fetchAPI('/api/ncb-slabs');
+            if (ncbData && ncbData.ncb_slabs) {
+                ncbData.ncb_slabs.forEach(ncb => {
+                    formElements.ncbSlab.appendChild(createOption(ncb, ncb));
+                });
+            }
+
+            // Fetch and populate CPA Covers
+            const cpaData = await fetchAPI('/api/cpa-covers');
+            if (cpaData && cpaData.cpa_covers) {
+                cpaData.cpa_covers.forEach(cpa => {
+                    formElements.cpaCover.appendChild(createOption(cpa, cpa));
+                });
+            }
+
+            // Fetch and populate Zero Depreciation
+            const zeroDepData = await fetchAPI('/api/zero-depreciation');
+            if (zeroDepData && zeroDepData.options) {
+                zeroDepData.options.forEach(option => {
+                    formElements.zeroDep.appendChild(createOption(option, option));
+                });
+            }
+
+            // Add event listeners for dependent dropdowns
+            formElements.state.addEventListener('change', onStateChange);
+            formElements.vehicleCategory.addEventListener('change', onVehicleCategoryChange);
+            formElements.vehicleType.addEventListener('change', onVehicleTypeChange);
+            formElements.fuelType.addEventListener('change', onFuelTypeChange);
+        }
+
+        // ==================== EVENT HANDLERS FOR DEPENDENT DROPDOWNS ====================
+        
+        async function onStateChange() {
+            const state = formElements.state.value;
+            
+            if (!state) {
+                clearSelect(formElements.rtoNumber);
+                return;
+            }
+
+            // Fetch RTOs for selected state
+            const rtoData = await fetchAPI(`/api/rtos/${state}`);
+            clearSelect(formElements.rtoNumber);
+            
+            if (rtoData && rtoData.rtos) {
+                rtoData.rtos.forEach(rto => {
+                    formElements.rtoNumber.appendChild(createOption(rto, rto));
+                });
+            }
+        }
+
+        async function onVehicleCategoryChange() {
+            const category = formElements.vehicleCategory.value;
+            
+            if (!category) {
+                clearSelect(formElements.vehicleType);
+                return;
+            }
+
+            // Fetch vehicle types for selected category
+            const typeData = await fetchAPI(`/api/vehicle-types?category=${category}`);
+            clearSelect(formElements.vehicleType);
+            
+            if (typeData && typeData.types) {
+                typeData.types.forEach(type => {
+                    formElements.vehicleType.appendChild(createOption(type, type));
+                });
+            }
+
+            // Hide optional groups until vehicle type is selected
+            document.getElementById('make-group').style.display = 'none';
+            document.getElementById('model-group').style.display = 'none';
+            document.getElementById('cc-group').style.display = 'none';
+            document.getElementById('gvw-group').style.display = 'none';
+            document.getElementById('watt-group').style.display = 'none';
+            document.getElementById('seating-group').style.display = 'none';
+            document.getElementById('trailer-group').style.display = 'none';
+        }
+
+        async function onVehicleTypeChange() {
+            const vehicleType = formElements.vehicleType.value;
+            const category = formElements.vehicleCategory.value;
+            
+            if (!vehicleType) {
+                document.getElementById('make-group').style.display = 'none';
+                document.getElementById('model-group').style.display = 'none';
+                clearSelect(formElements.fuelType);
+                clearSelect(formElements.make);
+                return;
+            }
+
+            // Fetch fuel types for selected vehicle type
+            const fuelData = await fetchAPI(`/api/fuel-types?vehicle_type=${vehicleType}`);
+            clearSelect(formElements.fuelType);
+            
+            if (fuelData && fuelData.fuels) {
+                fuelData.fuels.forEach(fuel => {
+                    formElements.fuelType.appendChild(createOption(fuel, fuel));
+                });
+            }
+
+            // Fetch makes for selected vehicle type
+            const makeData = await fetchAPI(`/api/makes?vehicle_type=${vehicleType}`);
+            clearSelect(formElements.make);
+            
+            if (makeData && makeData.makes && makeData.makes.length > 0) {
+                document.getElementById('make-group').style.display = 'block';
+                makeData.makes.forEach(make => {
+                    formElements.make.appendChild(createOption(make, make));
+                });
+            } else {
+                document.getElementById('make-group').style.display = 'none';
+            }
+
+            // Handle CC and GVW based on category
+            if (category === 'two-wheeler') {
+                document.getElementById('cc-group').style.display = 'block';
+                // Fetch CC slabs
+                const ccData = await fetchAPI('/api/cc-slabs');
+                clearSelect(formElements.ccSlab);
+                if (ccData && ccData.cc_slabs) {
+                    ccData.cc_slabs.forEach(cc => {
+                        formElements.ccSlab.appendChild(createOption(cc, cc));
+                    });
+                }
+            } else if (category === 'gcv') {
+                document.getElementById('gvw-group').style.display = 'block';
+                // Fetch GVW slabs
+                const gvwData = await fetchAPI('/api/gvw-slabs');
+                clearSelect(formElements.gvwSlab);
+                if (gvwData && gvwData.gvw_slabs) {
+                    gvwData.gvw_slabs.forEach(gvw => {
+                        formElements.gvwSlab.appendChild(createOption(gvw, gvw));
+                    });
+                }
+            } else if (category === 'pcv') {
+                // Show seating for non-auto PCV
+                if (vehicleType !== 'auto') {
+                    document.getElementById('seating-group').style.display = 'block';
+                    // Fetch seating capacities
+                    const seatingData = await fetchAPI('/api/seating-capacities');
+                    clearSelect(formElements.seatingCapacity);
+                    if (seatingData && seatingData.capacities) {
+                        seatingData.capacities.forEach(seat => {
+                            formElements.seatingCapacity.appendChild(createOption(seat, seat));
+                        });
+                    }
+                }
+            }
+
+            // Show trailer only for Misc (Tractor)
+            if (category === 'misc') {
+                document.getElementById('trailer-group').style.display = 'block';
+                // Fetch trailers
+                const trailerData = await fetchAPI('/api/trailers');
+                clearSelect(formElements.trailer);
+                if (trailerData && trailerData.trailers) {
+                    trailerData.trailers.forEach(trailer => {
+                        formElements.trailer.appendChild(createOption(trailer, trailer));
+                    });
+                }
+            } else {
+                document.getElementById('trailer-group').style.display = 'none';
+            }
+        }
+
+        async function onFuelTypeChange() {
+            const fuel = formElements.fuelType.value;
+            const category = formElements.vehicleCategory.value;
+
+            // Show Watt ONLY for electric two-wheelers
+            if (category === 'two-wheeler' && fuel === 'electric') {
+                document.getElementById('watt-group').style.display = 'block';
+                document.getElementById('cc-group').style.display = 'none';
+                // Fetch watt slabs
+                const wattData = await fetchAPI('/api/watt-slabs');
+                clearSelect(formElements.wattSlab);
+                if (wattData && wattData.watt_slabs) {
+                    wattData.watt_slabs.forEach(watt => {
+                        formElements.wattSlab.appendChild(createOption(watt, watt));
+                    });
+                }
+            } else if (category === 'two-wheeler' && fuel !== 'electric') {
+                document.getElementById('cc-group').style.display = 'block';
+                document.getElementById('watt-group').style.display = 'none';
+            }
+        }
+
+        // ==================== FORM SUBMISSION ====================
+        
+        const form = document.querySelector('form');
+        const submitButton = form.querySelector('button[type="submit"]');
+        const resultsSection = document.getElementById('results-section');
+        const resultsMessage = document.getElementById('results-message');
+        const resultsTable = document.getElementById('results-table');
+        const resultsBody = document.getElementById('results-body');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Calculating...';
+            console.log('[FORM] Submitting form...');
+
+            // Get form data
+            const formData = new FormData(this);
+            
+            try {
+                // Make API call
+                console.log('[FORM] Calling /check-payout endpoint...');
+                const response = await fetch('/check-payout', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                console.log('[FORM] Response received:', data.status);
+
+                // Display results
+                if (data.status === 'success' && data.top_3_payouts && data.top_3_payouts.length > 0) {
+                    console.log(`[FORM] ✅ Found ${data.top_3_payouts.length} payouts`);
+                    resultsMessage.textContent = data.message;
+                    resultsTable.style.display = 'block';
+                    resultsBody.innerHTML = '';
+                    
+                    data.top_3_payouts.forEach(payout => {
+                        const row = document.createElement('tr');
+                        row.style.borderBottom = '1px solid #ddd';
+                        if (payout.rank % 2 === 0) {
+                            row.style.backgroundColor = '#f5f5f5';
+                        }
+                        
+                        // Format company name with conditions if present
+                        const companyDisplay = payout.conditions 
+                            ? `<strong>${payout.company_name}</strong><br/><span style="font-size: 0.9em; color: #666;">📌 ${payout.conditions}</span>`
+                            : `<strong>${payout.company_name}</strong>`;
+                        
+                        row.innerHTML = `
+                            <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold; text-align: center;">
+                                ${payout.rank === 1 ? '🥇' : payout.rank === 2 ? '🥈' : payout.rank === 3 ? '🥉' : payout.rank}
+                            </td>
+                            <td style="padding: 12px; border: 1px solid #ddd;">${companyDisplay}</td>
+                            <td style="padding: 12px; border: 1px solid #ddd; text-align: right; font-weight: bold; color: #1976d2;">
+                                ${payout.payout_percentage.toFixed(2)}rp
+                            </td>
+                        `;
+                        resultsBody.appendChild(row);
+                    });
+
+                    resultsSection.style.display = 'block';
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // Display selected criteria summary
+                    const criteriaSummary = document.getElementById('criteria-summary');
+                    const formDataObj = new FormData(form);
+                    const criteria = {
+                        'State': formDataObj.get('state') || 'N/A',
+                        'RTO Code': formDataObj.get('rto_number') || 'N/A',
+                        'Vehicle Category': formDataObj.get('vehicle_category') || 'N/A',
+                        'Vehicle Type': formDataObj.get('vehicle_type') || 'N/A',
+                        'Fuel Type': formDataObj.get('fuel_type') || 'N/A',
+                        'Vehicle Age': formDataObj.get('vehicle_age') || 'N/A',
+                        'Policy Type': formDataObj.get('policy_type') || 'N/A',
+                        'Business Type': formDataObj.get('business_type') || 'N/A',
+                        'NCB': formDataObj.get('ncb_slab') || 'N/A',
+                        'CPA Cover': formDataObj.get('cpa_cover') || 'N/A',
+                        'Zero Depreciation': formDataObj.get('zero_dep') || 'N/A'
+                    };
+                    
+                    let criteriaHTML = '<strong>✓ Query Submitted With:</strong><br/><br/>';
+                    for (const [key, value] of Object.entries(criteria)) {
+                        if (value && value !== 'N/A') {
+                            criteriaHTML += `<strong>${key}:</strong> ${value}<br/>`;
+                        }
+                    }
+                    criteriaSummary.innerHTML = criteriaHTML;
+                } else {
+                    console.log('[FORM] ⚠️ No data found');
+                    resultsMessage.textContent = data.message || 'No payout data found for this combination.';
+                    resultsMessage.style.backgroundColor = '#fff3cd';
+                    resultsMessage.style.borderLeftColor = '#ffc107';
+                    resultsMessage.style.color = '#856404';
+                    resultsBody.innerHTML = '';
+                    resultsTable.style.display = 'none';
+                    
+                    // Display criteria summary even when no results
+                    const criteriaSummary = document.getElementById('criteria-summary');
+                    const formDataObj = new FormData(form);
+                    const criteria = {
+                        'State': formDataObj.get('state') || 'N/A',
+                        'RTO Code': formDataObj.get('rto_number') || 'N/A',
+                        'Vehicle Category': formDataObj.get('vehicle_category') || 'N/A',
+                        'Vehicle Type': formDataObj.get('vehicle_type') || 'N/A',
+                        'Fuel Type': formDataObj.get('fuel_type') || 'N/A',
+                        'Vehicle Age': formDataObj.get('vehicle_age') || 'N/A',
+                        'Policy Type': formDataObj.get('policy_type') || 'N/A',
+                        'Business Type': formDataObj.get('business_type') || 'N/A',
+                        'NCB': formDataObj.get('ncb_slab') || 'N/A',
+                        'CPA Cover': formDataObj.get('cpa_cover') || 'N/A',
+                        'Zero Depreciation': formDataObj.get('zero_dep') || 'N/A'
+                    };
+                    
+                    let criteriaHTML = '<strong>✓ Query Submitted With:</strong><br/><br/>';
+                    for (const [key, value] of Object.entries(criteria)) {
+                        if (value && value !== 'N/A') {
+                            criteriaHTML += `<strong>${key}:</strong> ${value}<br/>`;
+                        }
+                    }
+                    criteriaSummary.innerHTML = criteriaHTML;
+                    
+                    resultsSection.style.display = 'block';
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } catch (error) {
+                console.error('[FORM] Error:', error);
+                resultsMessage.textContent = 'Error processing request: ' + error.message;
+                resultsMessage.style.backgroundColor = '#ffebee';
+                resultsMessage.style.borderLeftColor = '#f44336';
+                resultsMessage.style.color = '#c62828';
+                resultsBody.innerHTML = '';
+                resultsTable.style.display = 'none';
+                resultsSection.style.display = 'block';
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } finally {
+                // Reset button state
+                submitButton.disabled = false;
+                submitButton.textContent = 'Calculate Payout';
+                console.log('[FORM] Form submission complete');
+            }
+        });
+
+        // Initialize dropdowns on page load
+        document.addEventListener('DOMContentLoaded', initializeDropdowns);
+    </script>
             'TN': {
                 '01': 'CHENNAI CENTRAL RTO',
                 '02': 'CHENNAI (NORTH WEST) RTO',
@@ -461,6 +819,13 @@
                 '96': 'KOVILPATTI RTO',
                 '97': 'ARANI RTO',
                 '99': 'COIMBATORE (WEST) RTO'
+            },
+            'PY': {
+                '01': 'PUDUCHERRY',
+                '02': 'KARAIKAL',
+                '03': 'MAHE',
+                '04': 'YANAM',
+                '05': 'OULGARET'
             },
             'KA': {
                 '01': 'Koramangala',
@@ -719,20 +1084,25 @@
             }
         };
 
+        // Map TN_PONDICHERRY and TN_CHENNAI to use the full Tamil Nadu RTO list
+        rtoData['TN_PONDICHERRY'] = rtoData['TN'];
+        rtoData['TN_CHENNAI'] = rtoData['TN']                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ;
+
         // Age Slabs based on Vehicle Category and Sub-Category (from reference data)
+        // NOTE: Age is now a numeric input (1-50), ranges will be matched on backend
         const ageSlabs = {
-            'bike': ['NEW', 'upto 5 years', '6 to 10 years', '6 to 15 years', 'Above 5 years', 'Above 10 years'],
-            'scooter': ['NEW', 'upto 5 years', '6 to 10 years', '6 to 15 years', 'Above 5 years', 'Above 10 years'],
-            'private-car': ['NEW', 'upto 9 years', 'upto 14 years', 'upto 15 years', '4 to 15 years', '4 to 20 years', '4-20 yrs', '6 to 14 years', 'Upto 20 years', '4 to 25 years'],
-            'auto': ['NEW', 'upto 5 years', '6 to 15 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'Upto 20 years', 'OLD upto 15 years & upto 30 Years for STP'],
-            'taxi': ['NEW', 'upto 5 years', '6 to 15 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'Upto 20 years', 'OLD upto 15 years & upto 30 Years for STP'],
-            'educational-bus': ['NEW', 'upto 5 years', '6 to 15 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'Upto 20 years', 'OLD upto 15 years & upto 30 Years for STP'],
-            'staff-bus': ['NEW', 'upto 5 years', '6 to 15 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'Upto 20 years', 'OLD upto 15 years & upto 30 Years for STP'],
-            '3-wheeler-goods': ['3 to 9 years', 'Upto 4 years', 'upto 5 years', '5 to 10 years', '5 to 15 years', '6 to 15 years', '9 to 15 years', 'upto 6 years', 'upto 10 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'upto 20 years & upto 25 Years for STP', 'upto 22 years', 'upto 25 Years for STP', 'upto 15 years & upto 30 Years for STP'],
-            '4-wheeler-goods': ['3 to 9 years', 'Upto 4 years', 'upto 5 years', '5 to 10 years', '5 to 15 years', '6 to 15 years', '9 to 15 years', 'upto 6 years', 'upto 10 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'upto 20 years & upto 25 Years for STP', 'upto 22 years', 'upto 25 Years for STP', 'upto 15 years & upto 30 Years for STP'],
-            'flatbed': ['3 to 9 years', 'Upto 4 years', 'upto 5 years', '5 to 10 years', '5 to 15 years', '6 to 15 years', '9 to 15 years', 'upto 6 years', 'upto 10 years', 'upto 15 years', 'upto 15 years & upto 20 Years for STP', 'upto 15 years & upto 25 Years for STP', 'upto 20 years & upto 25 Years for STP', 'upto 22 years', 'upto 25 Years for STP', 'upto 15 years & upto 30 Years for STP'],
-            'tractor': ['NEW', 'upto 10 years', 'upto 15 years', 'OLD (Age upto 15 years)'],
-            'other-misc-vehicles': ['NEW', 'upto 10 years', 'upto 15 years', 'OLD (Age upto 15 years)']
+            'bike': [],
+            'scooter': [],
+            'private-car': [],
+            'auto': [],
+            'taxi': [],
+            'educational-bus': [],
+            'staff-bus': [],
+            '3-wheeler-goods': [],
+            '4-wheeler-goods': [],
+            'flatbed': [],
+            'tractor': [],
+            'other-misc-vehicles': []
         };
 
         const stateSelect = document.getElementById('state');
@@ -747,11 +1117,66 @@
         const wattGroup = document.getElementById('watt-group');
         const seatingGroup = document.getElementById('seating-group');
         const trailerGroup = document.getElementById('trailer-group');
+        const makeGroup = document.getElementById('make-group');
+        const modelGroup = document.getElementById('model-group');
+        const makeSelect = document.getElementById('make');
+        const modelSelect = document.getElementById('model');
         const policyTypeSelect = document.getElementById('policy-type');
-        const claimStatusSelect = document.getElementById('claim-status');
         const ncbSlabSelect = document.getElementById('ncb-slab');
         const ccSlabSelect = document.getElementById('cc-slab');
         const seatingCapacitySelect = document.getElementById('seating-capacity');
+
+        // Make/Model data by vehicle type
+        const makeModelData = {
+            '4-wheeler-goods': {
+                makes: ['TATA', 'Mahindra,Ashok', 'Other make', 'All make'],
+                models: ['except Bolero']
+            },
+            'flatbed': {
+                makes: [],
+                models: []
+            },
+            '3-wheeler-goods': {
+                makes: [],
+                models: []
+            },
+            'taxi': {
+                makes: [],
+                models: ['Innova, Innova crysta, Hycross, Scorpio, Bolero']
+            },
+            'auto': {
+                makes: ['Bajaj,Piaggio', 'Piaggio'],
+                models: []
+            },
+            'bike': {
+                makes: ['Hero,Yamaha', 'TVS', 'Suzuhi', 'RE', 'Honda'],
+                models: []
+            },
+            'scooter': {
+                makes: ['TVS', 'Except TVS', 'Except Hero'],
+                models: []
+            },
+            'educational-bus': {
+                makes: [],
+                models: []
+            },
+            'staff-bus': {
+                makes: [],
+                models: []
+            },
+            'tractor': {
+                makes: [],
+                models: []
+            },
+            'other-misc-vehicles': {
+                makes: [],
+                models: []
+            },
+            'private-car': {
+                makes: [],
+                models: []
+            }
+        };
 
         // Function to update policy types based on vehicle category
         function updatePolicyTypes(category) {
@@ -789,25 +1214,28 @@
                 placeholder.textContent = '-- Choose RTO Code --';
                 placeholder.selected = true;
                 rtoNumberSelect.appendChild(placeholder);
+                
                 const rtos = rtoData[selectedState];
                 
-                // Sort RTO codes in ascending order (numeric sorting with special handling)
-                const sortedCodes = Object.keys(rtos).sort((a, b) => {
-                    const numA = parseInt(a);
-                    const numB = parseInt(b);
-                    if (numA !== numB) {
-                        return numA - numB;  // Sort by numeric value
+                if (rtos) {
+                    // Sort RTO codes in ascending order (numeric sorting with special handling)
+                    const sortedCodes = Object.keys(rtos).sort((a, b) => {
+                        const numA = parseInt(a);
+                        const numB = parseInt(b);
+                        if (numA !== numB) {
+                            return numA - numB;  // Sort by numeric value
+                        }
+                        // If numeric parts are equal, sort alphabetically (e.g., '15' before '15M')
+                        return a.localeCompare(b);
+                    });
+                    
+                    for (const code of sortedCodes) {
+                        const name = rtos[code];
+                        const option = document.createElement('option');
+                        option.value = code;
+                        option.textContent = `${code} - ${name}`;
+                        rtoNumberSelect.appendChild(option);
                     }
-                    // If numeric parts are equal, sort alphabetically (e.g., '15' before '15M')
-                    return a.localeCompare(b);
-                });
-                
-                for (const code of sortedCodes) {
-                    const name = rtos[code];
-                    const option = document.createElement('option');
-                    option.value = code;
-                    option.textContent = `${code} - ${name}`;
-                    rtoNumberSelect.appendChild(option);
                 }
                 rtoNumberSelect.selectedIndex = 0;
                 rtoNumberSelect.value = '';
@@ -836,7 +1264,10 @@
             } else if (category === 'private-car') {
                 options = ['Private Car'];
             } else if (category === 'gcv') {
-                options = ['3 Wheeler Goods', '4 Wheeler Goods', 'Flatbed'];
+                options = ['3 Wheeler Goods', '4 Wheeler Goods'];
+            } else if (category === 'flatbed') {
+                // Flatbed is a top-level category; its sub-types (if any) are specific to flatbed
+                options = ['Flatbed'];
             } else if (category === 'pcv') {
                 options = ['Auto', 'Taxi', 'Educational Bus', 'Staff Bus'];
             } else if (category === 'misc') {
@@ -858,6 +1289,9 @@
             let fuelOptions = [];
             if (category === 'two-wheeler') {
                 fuelOptions = ['Petrol', 'Electric'];
+            } else if (category === 'flatbed') {
+                // Flatbeds are diesel operated in our dataset
+                fuelOptions = ['Diesel'];
             } else if (category === 'misc') {
                 fuelOptions = ['Petrol', 'Diesel'];
             } else {
@@ -870,7 +1304,7 @@
                 fuelTypeSelect.appendChild(option);
             });
 
-            // Update CC Slab based on Category
+            // Update CC / GVW based on Category
             ccSlabSelect.innerHTML = '';
             const defaultCC = document.createElement('option');
             defaultCC.value = '';
@@ -889,34 +1323,90 @@
                 ccSlabSelect.appendChild(option);
             });
 
-            // Show capacity based on category
+            // Show/Hide fields based on category
             ccGroup.style.display = (category === 'two-wheeler' || category === 'private-car') ? 'block' : 'none';
-            gvwGroup.style.display = (category === 'gcv') ? 'block' : 'none';
+            // Flatbed behaves like a GCV - show GVW options and hide unrelated fields
+            gvwGroup.style.display = (category === 'gcv' || category === 'flatbed') ? 'block' : 'none';
             wattGroup.style.display = 'none'; // Will be shown based on fuel type
             seatingGroup.style.display = 'none'; // Will be shown based on vehicle type for PCV
-            trailerGroup.style.display = (category === 'gcv') ? 'block' : 'none';
+            trailerGroup.style.display = 'none'; // Will be shown only for Tractor type
+            // For Flatbed we don't require Make/Model selection in the UI
+            makeGroup.style.display = (category === 'flatbed') ? 'none' : 'none';
+            modelGroup.style.display = (category === 'flatbed') ? 'none' : 'none';
 
             // Update policy types based on category
             updatePolicyTypes(category);
-
-            // Reset vehicle age when category changes
-            vehicleAgeSelect.innerHTML = '<option value="">-- Choose Age Category --</option>';
         });
 
         // Vehicle Type change event
         vehicleTypeSelect.addEventListener('change', function() {
             const selectedType = this.value;
             const category = vehicleCategorySelect.value;
-            if (selectedType && ageSlabs[selectedType]) {
-                vehicleAgeSelect.innerHTML = '<option value="">-- Choose Age Category --</option>';
-                const ages = ageSlabs[selectedType];
-                ages.forEach(age => {
-                    const option = document.createElement('option');
-                    option.value = age.toLowerCase().replace(/\s+/g, '-');
-                    option.textContent = age;
-                    vehicleAgeSelect.appendChild(option);
-                });
+            
+            if (!selectedType) {
+                makeGroup.style.display = 'none';
+                modelGroup.style.display = 'none';
+            } else {
+                // For Flatbed category we do NOT show Make/Model selection in the UI
+                if (category === 'flatbed') {
+                    makeGroup.style.display = 'none';
+                    modelGroup.style.display = 'none';
+                } else {
+                    // Show Make and Model fields after vehicle type is selected
+                    makeGroup.style.display = 'block';
+                    modelGroup.style.display = 'block';
+                    
+                    // Handle Make and Model population
+                    const makeModelInfo = makeModelData[selectedType];
+                    
+                    // Populate Make with "Others" option
+                    makeSelect.innerHTML = '';
+                    const defaultMake = document.createElement('option');
+                    defaultMake.value = '';
+                    defaultMake.textContent = '-- Choose Make --';
+                    makeSelect.appendChild(defaultMake);
+                    
+                    // Add "Others" option first
+                    const othersMakeOption = document.createElement('option');
+                    othersMakeOption.value = 'others';
+                    othersMakeOption.textContent = 'Others';
+                    makeSelect.appendChild(othersMakeOption);
+                    
+                    // Add database makes if available
+                    if (makeModelInfo && makeModelInfo.makes && makeModelInfo.makes.length > 0) {
+                        makeModelInfo.makes.forEach(make => {
+                            const option = document.createElement('option');
+                            option.value = make.toLowerCase().replace(/\s+/g, '-');
+                            option.textContent = make;
+                            makeSelect.appendChild(option);
+                        });
+                    }
+                    
+                    // Populate Model with "Others" option
+                    modelSelect.innerHTML = '';
+                    const defaultModel = document.createElement('option');
+                    defaultModel.value = '';
+                    defaultModel.textContent = '-- Choose Model --';
+                    modelSelect.appendChild(defaultModel);
+                    
+                    // Add "Others" option first
+                    const othersModelOption = document.createElement('option');
+                    othersModelOption.value = 'others';
+                    othersModelOption.textContent = 'Others';
+                    modelSelect.appendChild(othersModelOption);
+                    
+                    // Add database models if available
+                    if (makeModelInfo && makeModelInfo.models && makeModelInfo.models.length > 0) {
+                        makeModelInfo.models.forEach(model => {
+                            const option = document.createElement('option');
+                            option.value = model.toLowerCase().replace(/\s+/g, '-').replace(/,/g, '-');
+                            option.textContent = model;
+                            modelSelect.appendChild(option);
+                        });
+                    }
+                }
             }
+            
             // Handle seating for PCV
             if (category === 'pcv') {
                 if (selectedType === 'auto') {
@@ -944,32 +1434,28 @@
             } else {
                 seatingGroup.style.display = 'none';
             }
+            
+            // Show trailer only for Tractor
+            trailerGroup.style.display = (selectedType === 'tractor') ? 'block' : 'none';
         });
 
-        // Watt Slab based on Fuel Type
+        // Watt Slab based on Fuel Type (Electric) - hide CC for electric vehicles
         fuelTypeSelect.addEventListener('change', function() {
             const fuel = this.value;
             const category = vehicleCategorySelect.value;
+            // Show Watt ONLY for electric two-wheelers
             wattGroup.style.display = (category === 'two-wheeler' && fuel === 'electric') ? 'block' : 'none';
-        });
-
-        // Claim Status - Auto-set NCB to 0% when Claim is selected
-        claimStatusSelect.addEventListener('change', function() {
-            const claimStatus = this.value;
-            if (claimStatus === 'claim') {
-                // Auto-set NCB to 0% and disable manual selection
-                ncbSlabSelect.value = '0';
-                ncbSlabSelect.disabled = true;
-            } else if (claimStatus === 'no-claim') {
-                // Enable NCB selection for No Claim
-                ncbSlabSelect.disabled = false;
-                ncbSlabSelect.value = '';  // Reset for user to select
-            } else {
-                // Reset if claim status is cleared
-                ncbSlabSelect.disabled = false;
-                ncbSlabSelect.value = '';
+            // Hide CC if two-wheeler with electric fuel
+            if (category === 'two-wheeler' && fuel === 'electric') {
+                ccGroup.style.display = 'none';
+            } else if (category === 'two-wheeler' && fuel !== 'electric') {
+                // Show CC for non-electric two-wheelers
+                ccGroup.style.display = 'block';
             }
         });
+
+        // NCB is now directly selected by user (Yes/No only)
+        // No need for derivation based on age or claim status
     </script>
 </body>
 </html>
