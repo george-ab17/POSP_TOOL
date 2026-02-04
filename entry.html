@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POSP Payout Checker - Srinithi Insurance Corporation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Work+Sans:wght@300;400;500;600&display=swap');
+
+        :root {
+            color-scheme: light;
+            --bg: #f2f5ff;
+            --bg-accent: #e9eeff;
+            --card: #ffffff;
+            --ink: #1b1b1f;
+            --muted: #6a6a73;
+            --primary: #213f99;
+            --primary-strong: #1b2f75;
+            --primary-soft: #dbe3ff;
+            --accent: #f2d7b2;
+            --border: rgba(33, 63, 153, 0.18);
+            --shadow: 0 30px 75px rgba(33, 63, 153, 0.22);
+            --radius-lg: 26px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Work Sans", "Helvetica Neue", sans-serif;
+            color: var(--ink);
+            background: radial-gradient(circle at top, #ffffff 0%, var(--bg) 55%, var(--bg-accent) 100%);
+            display: grid;
+            place-items: center;
+            padding: 48px 20px;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(120deg, rgba(219, 227, 255, 0.65), rgba(255, 255, 255, 0) 45%),
+                linear-gradient(320deg, rgba(33, 63, 153, 0.12), rgba(255, 255, 255, 0) 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .entry-shell {
+            width: min(980px, 100%);
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(33, 63, 153, 0.1);
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            overflow: hidden;
+        }
+
+        .entry-left {
+            padding: 48px 46px;
+            background: linear-gradient(145deg, rgba(33, 63, 153, 0.08), rgba(255, 255, 255, 0));
+            border-right: 1px solid rgba(33, 63, 153, 0.12);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .logo {
+            max-width: 140px;
+            height: auto;
+            display: block;
+        }
+
+        .title {
+            font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+            font-size: 34px;
+            color: #213f99;
+            letter-spacing: -0.02em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--primary-soft);
+            color: var(--primary-strong);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .entry-right {
+            padding: 48px 46px;
+            display: grid;
+            align-content: center;
+            gap: 22px;
+        }
+
+        .feature-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .feature-item {
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: #f7f8ff;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 12px;
+            align-items: center;
+            font-size: 14px;
+            color: var(--ink);
+        }
+
+        .feature-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            background: #213f99;
+            color: #fff;
+            font-weight: 600;
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(140deg, #213f99, var(--primary-strong));
+            color: #fff;
+            padding: 16px 22px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 999px;
+            box-shadow: 0 20px 40px rgba(33, 63, 153, 0.24);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: center;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 24px 50px rgba(33, 63, 153, 0.3);
+        }
+
+        .cta-subtext {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .footer-text strong {
+            color: #213f99;
+        }
+
+        @media (max-width: 900px) {
+            .entry-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .entry-left {
+                border-right: none;
+                border-bottom: 1px solid rgba(33, 63, 153, 0.12);
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 32px 16px;
+            }
+
+            .entry-left,
+            .entry-right {
+                padding: 32px 24px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="entry-shell">
+        <div class="entry-left">
+            <div class="brand">
+                <img src="/static/logo/dark-logo-min.png" alt="Srinithi Insurance Corporation Logo" class="logo" onerror="this.style.display='none'">
+            </div>
+            <h1 class="title">POSP Payout Checker</h1>
+            <p class="subtitle">Instantly find the best payout scenario for each vehicle profile. Streamlined, consistent, and designed for confident advisory conversations.</p>
+            <div class="footer-text">
+                Powered by <strong>Shrinithi Insurance Corporation</strong><br>
+                For POSP agents and distributors only
+            </div>
+        </div>
+
+        <div class="entry-right">
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon">A1</div>
+                    <div>Fast payout lookup across multiple states and categories.</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">RTO</div>
+                    <div>Smart RTO code selection tailored to each state.</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">Top</div>
+                    <div>Instant comparison of leading insurer payout options.</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">Fit</div>
+                    <div>Personalized results based on vehicle profile and policy details.</div>
+                </div>
+            </div>
+
+            <a href="/form" class="cta-button">Start Checking Payouts</a>
+            <div class="cta-subtext">Your data stays internal. Use this tool before sharing quotes.</div>
+        </div>
+    </div>
+</body>
+</html>

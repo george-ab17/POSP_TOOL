@@ -1,0 +1,68 @@
+Date_from in the N/A means its not applicable like 
+Date_till in the N/A means its not applicable like 
+it means like all the dates are available for that category understand that 
+
+
+so in that date from its said like feb 1 so if the user enters the ui after that feb 1 those criteria payouts are shown 
+in the date till its like feb 1 if you enter anything from feb 2 there wont be any records for that criteria 
+
+business type all means all category 
+in cc_slab if its no then you should be shown in the ui because only for certain things the cc slab is there so if its no then no need to show anything 
+same goes for the 
+watt slab,gvw slab,trailer if there is no in that column then it shouldn't be shown in the ui so because for example those things will be coming correctly for that criteria only like if the vehicle is electric for that cc slab gvw slab would be no only because its unrelated 
+
+
+
+in the seating capacity if any value its there only for that criteria the value should be shown in the ui else dont need if its no then it shouldn't be shown in the ui 
+
+in the business type there are four criteria 
+new,rollover ,renewal ,old
+
+for policy type there are four criteria only
+
+
+in make and model N/A means all the criteria applicable for that criteria 
+
+if there is entire tamilnadu entire Pondicherry like that in the rto column it means that every rto inside that state would be applicable and also there would be ro-chn which means rest of Chennai rto then means except this all are applicable 01  CHENNAI CENTRAL
+02  CHENNAI (NORTH WEST)
+03  CHENNAI (NORTH EAST)
+04  CHENNAI (EAST)
+05  CHENNAI (NORTH)
+06  CHENNAI (SOUTH-EAST)
+07  CHENNAI (SOUTH)
+09  CHENNAI WEST
+10  CHENNAI (SOUTH-WEST)
+11  TAMBARAM
+12  PARUTHIPATTU
+13  AMBATTUR
+14  SHOLINGANALLUR
+18  REDHILLS
+22  MEENAMBAKKAM
+85  KUNDRATHUR
+
+and there is declined rto which means for example for state tn declined-09,08 which means except the rto 09,08 all are applicable for that insurance 
+
+
+and vehicle category is only 5 criteria
+
+
+
+
+
+
+
+
+and also 
+in the watt slab only this category if its related to watt then it would be above 2000 ,upto 2000
+in the cc slab for the two wheeler would be 3 criteria above 350 cc , 150 - 350 cc , below 350 like that
+condition no means dont need to show in the final ui whereas if its there it should be displayed with the insurer with the payout value with the condition if it has
+
+
+NCB_Slab,CPA_Cover,Zero_Depreciation in this yes and no is the criteria so for everything its there in this yes or no is important 
+
+final payout is the main payout value we would be showing in the final and also for that we would be displaying that by rp not percentage 
+
+Payin,Gross_payout,Out TDS this things are not needed for the ui its unrelated for our work 
+
+
+ 

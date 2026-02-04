@@ -129,3 +129,8 @@ logo/
 # Temporary files
 *.tmp
 *.temp
+
+# Local run outputs
+server_output.log
+test_output.txt
+*.out
