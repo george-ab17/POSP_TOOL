@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POSP Payout Checker - Srinithi Insurance Corporation</title>
+    <link rel="stylesheet" href="/static/css/index.css?v=2">
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="header">
+                <div class="brand">
+                    <img src="/static/logo/dark-logo-min.png" alt="Srinithi Insurance Corporation Logo">
+                </div>
+                <div class="title-block">
+                    <h1>POSP Payout Checker</h1>
+                </div>
+                <div aria-hidden="true"></div>
+            </div>
+
+            <form action="/check-payout" method="post" id="payout-form">
+                <div class="section">
+                    <div class="section-title">Location</div>
+                    <div class="section-body">
+                        <div class="form-group" id="state-group">
+                            <label for="state">State</label>
+                            <select id="state" name="state" required>
+                                <option value="" selected>-- Choose State --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="rto-group">
+                            <label for="rto-number">RTO Code</label>
+                            <div class="rto-code">
+                                <span id="rto-prefix" class="rto-prefix">XX</span>
+                                <select id="rto-number" name="rto_number" class="rto-number">
+                                    <option value="" selected>-- Choose RTO --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Vehicle Details</div>
+                    <div class="section-body">
+                        <div class="form-group" id="vehicle-category-group">
+                            <label for="vehicle-category">Vehicle Category</label>
+                            <select id="vehicle-category" name="vehicle_category" required>
+                                <option value="" selected>-- Choose Category --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="vehicle-type-group">
+                            <label for="vehicle-type">Vehicle Type</label>
+                            <select id="vehicle-type" name="vehicle_type">
+                                <option value="" selected>-- Choose Vehicle Type --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="make-group">
+                            <label for="make">Make</label>
+                            <select id="make" name="make">
+                                <option value="" selected>-- Choose Make --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="model-group">
+                            <label for="model">Model</label>
+                            <select id="model" name="model">
+                                <option value="" selected>-- Choose Model --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="fuel-group">
+                            <label for="fuel-type">Fuel Type</label>
+                            <select id="fuel-type" name="fuel_type">
+                                <option value="" selected>-- Choose Fuel Type --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="cc-group">
+                            <label for="cc-slab">CC Slab</label>
+                            <select id="cc-slab" name="cc_slab">
+                                <option value="" selected>-- Choose CC Slab --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="watt-group">
+                            <label for="watt-slab">Watt Slab</label>
+                            <select id="watt-slab" name="watt_slab">
+                                <option value="" selected>-- Choose Watt Slab --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="seating-group">
+                            <label for="seating-capacity">Seating Capacity</label>
+                            <select id="seating-capacity" name="seating_capacity">
+                                <option value="" selected>-- Choose Seating Capacity --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="trailer-group">
+                            <label for="trailer">Trailer</label>
+                            <select id="trailer" name="trailer">
+                                <option value="" selected>-- Choose Trailer --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="vehicle-age-group">
+                            <label for="vehicle-age">Vehicle Age</label>
+                            <select id="vehicle-age" name="vehicle_age">
+                                <option value="" selected>-- Choose Vehicle Age --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="gvw-group">
+                            <label for="gvw-value">GVW Slab (Ton)</label>
+                            <input
+                                type="number"
+                                id="gvw-value"
+                                name="gvw_value"
+                                min="0"
+                                max="50"
+                                step="0.001"
+                                placeholder="Enter GVW in ton"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Policy Details</div>
+                    <div class="section-body">
+                        <div class="form-group" id="business-group">
+                            <label for="business-type">Business Type</label>
+                            <select id="business-type" name="business_type">
+                                <option value="" selected>-- Choose Business Type --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="policy-group">
+                            <label for="policy-type">Policy Type</label>
+                            <select id="policy-type" name="policy_type">
+                                <option value="" selected>-- Choose Policy Type --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optional fields kept for backend compatibility -->
+                <input type="hidden" name="gvw_slab" id="gvw-slab" value="">
+                <input type="hidden" name="ncb_slab" id="ncb-slab" value="">
+                <input type="hidden" name="cpa_cover" id="cpa-cover" value="">
+                <input type="hidden" name="zero_dep" id="zero-dep" value="">
+
+                <div class="section-actions">
+                    <button type="submit">Check Payout</button>
+                </div>
+            </form>
+
+            <div id="results-section" style="display:none;">
+                <div class="results-card">
+                    <h3>Top 5 Insurers with Payout</h3>
+                    <div id="results-message" style="display:none;"></div>
+                    <table id="results-table" class="results-table" style="display:none;">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Insurance Company</th>
+                                <th class="text-right">Payouts(RP)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/index.js?v=12" defer></script>
+</body>
+</html>

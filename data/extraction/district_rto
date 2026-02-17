@@ -1,0 +1,135 @@
+'''
+const rtoMasterData = {
+            'TN': { '01': 'CHENNAI CENTRAL RTO', '02': 'CHENNAI (NORTH WEST) RTO', '03': 'CHENNAI (NORTH EAST) RTO', '04': 'CHENNAI (EAST) RTO', '05': 'CHENNAI (NORTH) RTO', '06': 'CHENNAI (SOUTH-EAST) RTO', '07': 'CHENNAI (SOUTH) RTO', '09': 'CHENNAI WEST RTO', '10': 'CHENNAI (SOUTH-WEST) RTO', '11': 'TAMBARAM RTO', '12': 'POONAMALLE RTO', '13': 'AMBATTUR RTO', '14': 'SHOLINGANALLUR RTO', '15': 'ULUNDURPET RTO', '15M': 'KALAKURICHI RTO', '16': 'TINDIVANAM RTO', '18': 'REDHILLS RTO', '19': 'CHENGALPATTU RTO', '20': 'THIRUVALLUR RTO', '21': 'KANCHIPURAM RTO', '22': 'MEENAMBAKKAM RTO', '23': 'VELLORE RTO', '24': 'KRISHNAGIRI RTO', '25': 'TIRUVANNAMALAI RTO', '28': 'NAMAKKAL (NORTH) RTO', '29': 'DHARMAPURI RTO', '30': 'SALEM (WEST) RTO', '31': 'CUDDALORE RTO', '32': 'VILUPPURAM RTO', '33': 'ERODE EAST RTO', '34': 'TIRUCHENGODE RTO', '36': 'GOBI RTO', '37': 'COIMBATORE (SOUTH) RTO', '38': 'COIMBATORE NORTH RTO', '39': 'TIRUPUR NORTH RTO', '40': 'METTUPALAYAM RTO', '41': 'POLLACHI RTO', '42': 'TIRUPUR SOUTH RTO', '43': 'OOTY RTO', '45': 'TRICHY WEST RTO', '46': 'PERAMBALUR RTO', '47': 'KARUR RTO', '48': 'SRIRANGAM RTO', '49': 'THANJAVUR RTO', '50': 'TIRUVARUR RTO', '51': 'NAGAPATTINAM RTO', '52': 'SANKAGIRI RTO', '54': 'SALEM (EAST) RTO', '55': 'PUDUKKOTTAI RTO', '56': 'PERUNDURAI RTO', '57': 'DINDIGUL RTO', '58': 'MADURAI (SOUTH) RTO', '59': 'MADURAI (NORTH) RTO', '60': 'THENI RTO', '61': 'ARIYALUR RTO', '63': 'SIVAGANGAI RTO', '64': 'MADURAI (CENTRAL) RTO', '65': 'RAMANATHAPURAM RTO', '66': 'COIMBATORE (CENTRAL) RTO', '67': 'VIRUDHUNAGAR RTO', '68': 'KUMBAKONAM RTO', '69': 'TUTICORIN RTO', '70': 'HOSUR RTO', '72': 'TIRUNELVELI RTO', '73': 'RANIPET RTO', '74': 'NAGERCOIL RTO', '75': 'MARTHANDAM RTO', '76': 'TENKASI RTO', '77': 'ATTUR RTO', '78': 'DHARAPURAM RTO', '79': 'SANKARANKOVIL RTO', '81': 'TRICHY (EAST) RTO', '82': 'MAYILADUTHURAI RTO', '83': 'VANIYAMBADI RTO', '83M': 'TIRUPATTUR RTO', '84': 'SRIVILLIPUTTUR RTO', '85': 'KUNDRATHUR RTO', '86': 'ERODE WEST RTO', '87': 'SRIPERUMBUDUR RTO', '88': 'NAMAKKAL SOUTH RTO', '90': 'SALEM (SOUTH) RTO', '91': 'CHIDHAMBARAM RTO', '92': 'THIRUCHENDUR RTO', '93': 'METTUR RTO', '94': 'PALANI RTO', '95': 'SIVAKASI RTO', '96': 'KOVILPATTI RTO', '97': 'ARANI RTO', '99': 'COIMBATORE (WEST) RTO' },
+            'KA': { '01': 'Koramangala', '02': 'Rajajinagar', '03': 'Indiranagar', '04': 'Yeshwanthpur', '05': 'Jayanagar', '06': 'Tumkur', '07': 'Kolar', '08': 'Kolar Gold Fields', '09': 'Mysuru', '10': 'Chamarajanagar', '11': 'Mandya', '12': 'Madikeri', '13': 'Hassan', '14': 'Shivamogga', '15': 'Sagara', '16': 'Chitradurga', '17': 'Davanagere', '18': 'Chikkamagaluru', '19': 'Mangaluru', '20': 'Udupi', '21': 'Puttur', '22': 'Belagavi', '23': 'Chikkodi', '24': 'Bailhongal', '25': 'Dharwad', '26': 'Gadag', '27': 'Haveri', '28': 'Vijayapura', '29': 'Bagalkote', '30': 'Karwar', '31': 'Sirsi', '32': 'Kalaburagi', '33': 'Yadgir', '34': 'Ballari', '35': 'Hosapete', '36': 'Raichur', '37': 'Koppal', '38': 'Bidar', '39': 'Bhalki', '40': 'Chikkaballapura', '41': 'Jnana Bharathi', '42': 'Ramanagara', '43': 'Devanahalli', '44': 'Tiptur', '45': 'Hunsur', '46': 'Sakleshpura', '47': 'Honnavar', '48': 'Jamkhandi', '49': 'Gokak', '50': 'Yelahanka', '51': 'Electronic City', '52': 'Nelamangala', '53': 'KR Puram', '57': 'Shantinagar', '58': 'Chamrajpet', '59': 'Chandapura', '60': 'RT Nagar', '61': 'Marathahalli', '63': 'Dharwad East', '64': 'Madhugiri', '65': 'Dandeli', '66': 'Tarikere', '67': 'Chintamani', '68': 'Ranebennur', '69': 'Ramdurg', '70': 'Bantwal', '71': 'Athani' },
+            'KL': { '01': 'Thiruvananthapuram', '02': 'Kollam', '03': 'Pathanamthitta', '04': 'Alappuzha', '05': 'Kottayam', '06': 'Idukki', '07': 'Ernakulam', '08': 'Thrissur', '09': 'Palakkad', '10': 'Malappuram', '11': 'Kozhikode', '12': 'Wayanad', '13': 'Kannur', '14': 'Kasargode', '15': 'Kerala', '16': 'Attingal', '17': 'Muvattupuzha', '18': 'Vadakara', '19': 'Parassala', '20': 'Neyyattinkara', '21': 'Nedumangad', '22': 'Kazhakkoottam', '23': 'Karunagapally', '24': 'Kottarakara', '25': 'Punalur', '26': 'Adoor', '28': 'Mallappally', '29': 'Kayamkulam', '30': 'Chengannur', '31': 'Mavelikara', '32': 'Cherthala', '33': 'Changanassery', '34': 'Kanjirappally', '35': 'Pala', '36': 'Vaikom', '37': 'Vandiperiyar', '38': 'Thodupuzha', '39': 'Thripunithura', '40': 'Perumbavoor', '41': 'Aluva', '42': 'North Paravur', '43': 'Mattancherry', '44': 'Kothamangalam', '45': 'Irinjalakuda', '46': 'Guruvayur', '47': 'Kodungallur', '48': 'Wadakkancherry', '49': 'Alathur', '50': 'Mannarghat', '51': 'Ottappalam', '52': 'Pattambi', '53': 'Perinthalmanna', '54': 'Ponnani', '55': 'Tirur', '56': 'Koyilandi', '57': 'Koduvally', '58': 'Thalassery', '59': 'Thaliparamba', '60': 'Kanhangad', '61': 'Kunnathur', '62': 'Ranni', '63': 'Angamaly', '64': 'Chalakkudy', '65': 'Thirurangadi', '66': 'Kuttanadu', '67': 'Uzhavoor', '68': 'Devikulam', '69': 'Udumbanchola', '70': 'Chittur', '71': 'Nilambur', '72': 'Mananthavadi', '73': 'Sulthan Bathery' },
+            'AP': { '01': 'Adilabad', '02': 'Anantapur', '03': 'Chittoor', '04': 'Kadapa', '05': 'Kakinada', '06': 'Kakinada', '07': 'Guntur', '08': 'Guntur', '09': 'Hyderabad Central', '10': 'Hyderabad North', '11': 'Hyderabad East', '12': 'Hyderabad South', '13': 'Hyderabad West', '14': 'Hyderabad', '15': 'Karimnagar', '16': 'Vijayawada', '17': 'Vijayawada', '18': 'Vijayawada', '19': 'Vijayawada', '20': 'Khammam', '21': 'Kurnool', '22': 'Mahbubnagar', '23': 'Medak', '24': 'Nalgonda', '25': 'Nizamabad', '26': 'Nellore', '27': 'Ongole', '28': 'Ranga Reddy', '29': 'Ranga Reddy', '30': 'Srikakulam', '31': 'Visakhapatnam', '32': 'Visakhapatnam', '33': 'Gajuwaka', '35': 'Vizianagaram', '36': 'Warangal', '37': 'Eluru' },
+            'MH': { '01': 'Mumbai (South) - Tardeo', '02': 'Mumbai (West) - Andheri', '03': 'Mumbai (East) - Ghatkopar', '04': 'Thane', '05': 'Kalyan', '06': 'Raigad', '07': 'Sindhudurg Nagari', '08': 'Ratnagiri', '09': 'Kolhapur', '10': 'Sangli', '11': 'Satara', '12': 'Pune', '13': 'Solapur', '14': 'Pimpri Chinchwad', '16': 'Ahmednagar', '17': 'Shrirampur - Ahmednagar', '18': 'Dhule', '19': 'Jalgaon', '20': 'Aurangabad', '21': 'Jalna', '22': 'Parbhani', '23': 'Beed', '24': 'Latur', '25': 'Osmanabad', '26': 'Nanded', '27': 'Amravati', '28': 'Buldana', '29': 'Yavatmal', '30': 'Akola', '31': 'Nagpur', '33': 'Gadchiroli', '34': 'Chandrapur', '35': 'Gondia', '36': 'Bhandara', '37': 'Washim', '38': 'Hingoli', '39': 'Nandurbar', '40': 'Wadi Nagpur', '41': 'Malegaon - Nashik District', '42': 'Baramati - Pune', '43': 'Vashi (Sanpada)', '44': 'Ambejogai Beed', '45': 'Akluj - Solapur', '46': 'Panvel', '47': 'Borivali', '48': 'Vasai - Virar', '49': 'Nagpur (East) - Bhandara Road', '50': 'Karad', '51': 'Sangamner - Ahmednagar', '52': 'Parbhani (Rural)', '53': 'Pune South', '54': 'Pune North', '55': 'Mumbai Central', '56': 'Thane Rural' },
+            'TS': { '01': 'Adilabad', '02': 'Karimnagar', '03': 'Warangal', '04': 'Khammam', '05': 'Nalgonda', '06': 'Mahbubnagar', '07': 'Ranga Reddy', '08': 'Ranga Reddy', '09': 'Hyderabad Central', '10': 'Hyderabad North', '11': 'Hyderabad East', '12': 'Hyderabad South', '13': 'Hyderabad West', '14': 'Hyderabad', '15': 'Medak', '16': 'Nizamabad' },
+            'PY': { '01': 'Puducherry', '02': 'Karaikal', '03': 'Mahe', '04': 'Yanam', '05': 'Oulgaret' }
+        };
+'''
+'''
+chennai _Rto 
+01  CHENNAI CENTRAL
+02  CHENNAI (NORTH WEST)
+03  CHENNAI (NORTH EAST)
+04  CHENNAI (EAST)
+05  CHENNAI (NORTH)
+06  CHENNAI (SOUTH-EAST)
+07  CHENNAI (SOUTH)
+09  CHENNAI WEST
+10  CHENNAI (SOUTH-WEST)
+11  TAMBARAM
+12  POONAMALLI
+13  AMBATTUR
+14  SHOLINGANALLUR
+18  REDHILLS
+22  MEENAMBAKKAM
+85  KUNDRATHUR
+'''
+
+'''
+CHENNAI (RTO TN-01,02,03,04,05,06,07,09,10,11,12,13,14,22,85)
+CHENGALPATTU (RTO - TN 19)
+KANCHIPURAM (RTO TN - 21,87)
+TIRUVALLUR (RTO TN - 18,20)
+KANYAKUMARI (RTO TN - 74,75)
+THOOTHUKUDI (RTO TN - 69, 92, 96)
+TIRUNELVELI (RTO TN - 72, 76, 79)
+VIRUDHUNAGAR (RTO TN - 67)
+COIMBATORE (RTO TN - 37, 38, 40, 41, 66, 99)
+ERODE (RTO TN - 33, 36, 86)
+SALEM (RTO TN - 27, 30, 54, 77, 90)
+TIRUPPUR (RTO TN - 39, 42, 78)
+rest of tamilnadu means  tn-15,16,23,24,25,28,29,31,32,34,43,45,46,47,48,49,50,51,52,55,56,57,58,59,60,61,63,64,65,68,70,73,81,82,83,84,88,91,93,94,95,97)
+
+'''
+
+'''
+Mysore RTO numbers:
+KA-09, KA-45, KA-55
+
+Bangalore RTO numbers:
+KA-01, KA-02, KA-03, KA-04, KA-05, KA-41, KA-42, KA-43, KA-50, KA-51, KA-52, KA-53, KA-57, KA-59
+
+
+Mangalore RTO number:
+KA-19
+
+Belgaum RTO number:
+KA-22
+'''
+
+
+'''
+Andhra Pradesh RTO Codes (for your list)
+
+ANANTAPUR — AP-02
+CHITTOOR — AP-03
+EAST GODAVARI — AP-05, AP-06 (covers Kakinada / Amalapuram / Rajahmundry area)
+GUNTUR — AP-07, AP-08
+KADAPA — AP-04
+NELLORE — AP-26
+ONGOLE — AP-27
+REST OF ANDHRA PRADESH — other AP codes besides those above
+AP-01, AP-09, AP-10, AP-11, AP-12, AP-13, AP-14, AP-15, AP-16, AP-17, AP-18, AP-19, AP-20, AP-21, AP-22, AP-23, AP-24, AP-25, AP-28, AP-29, AP-30, AP-31, AP-32, AP-33, AP-34, AP-35, AP-37, AP-38, AP-39, AP-40
+VISAKHAPATNAM — AP-31, AP-32, AP-33, AP-34, AP-40
+WEST GODAVARI — AP-37, AP-38
+
+Telangana RTO Codes (for your list)
+
+HYDERABAD — TG-09, TG-10, TG-11, TG-12, TG-13, TG-14
+MAHBUBNAGAR — TG-06
+MEDAK — TG-08 (Medchal-Malkajgiri) and TG-35 (Medak district)
+NIZAMABAD — TG-16
+REST OF TELANGANA — all other TG codes besides those above
+TG-01, TG-02, TG-03, TG-04, TG-05, TG-07, TG-15, TG-17, TG-18, TG-19, TG-20, TG-21, TG-22, TG-23, TG-24, TG-25, TG-26, TG-27, TG-28, TG-30, TG-31, TG-32, TG-33, TG-34, TG-36, TG-37, TG-38
+
+
+
+
+Cochin / Kochi RTO list:
+Ernakulam (Kochi main RTO) — KL-07
+Thripunithura (Sub-RTO) — KL-39
+Perumbavoor (Sub-RTO) — KL-40
+Aluva (Sub-RTO) — KL-41
+North Paravur (Sub-RTO) — KL-42
+Mattancherry (Cochin) — KL-43
+Kothamangalam (Sub-RTO) — KL-44
+Angamaly (Sub-RTO) — KL-63
+
+KASARAGOD
+
+KL-14 (Kasaragod)
+
+KANNUR
+
+KL-13 (Kannur)
+
+KOLLAM
+
+KL-02 (Kollam)
+
+KOTTAYAM
+
+KL-05 (Kottayam)
+
+MALAPPURAM
+
+KL-10 (Malappuram)
+
+THRISSUR
+
+KL-08 (Thrissur)
+
+
+
+
+TN: missing 12 → 08, 17, 26, 27, 35, 44, 53, 62, 71, 80, 89, 98
+KL: missing 1 → 27
+MH: missing 2 → 15, 32
+AP: missing 1 → 34
+KA: missing 4 → 54, 55, 56, 62
+TS: missing 0 → None
+'''

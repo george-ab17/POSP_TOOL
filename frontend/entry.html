@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POSP Payout Checker - Srinithi Insurance Corporation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Work+Sans:wght@300;400;500;600&display=swap');
+
+        :root {
+            color-scheme: light;
+            --bg: #f2f5ff;
+            --bg-accent: #e9eeff;
+            --card: #ffffff;
+            --ink: #1b1b1f;
+            --muted: #6a6a73;
+            --primary: #213f99;
+            --primary-strong: #1b2f75;
+            --primary-soft: #dbe3ff;
+            --accent: #f2d7b2;
+            --border: rgba(33, 63, 153, 0.18);
+            --shadow: 0 30px 75px rgba(33, 63, 153, 0.22);
+            --radius-lg: 26px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Work Sans", "Helvetica Neue", sans-serif;
+            color: var(--ink);
+            background: radial-gradient(circle at top, #ffffff 0%, var(--bg) 55%, var(--bg-accent) 100%);
+            display: grid;
+            place-items: center;
+            padding: 44px 18px;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                linear-gradient(120deg, rgba(219, 227, 255, 0.65), rgba(255, 255, 255, 0) 45%),
+                linear-gradient(320deg, rgba(33, 63, 153, 0.12), rgba(255, 255, 255, 0) 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .entry-shell {
+            width: min(560px, 100%);
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(33, 63, 153, 0.1);
+            padding: 24px 22px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            max-width: 165px;
+            height: auto;
+            display: block;
+        }
+
+        .title {
+            font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+            font-size: clamp(22px, 4vw, 34px);
+            color: #213f99;
+            letter-spacing: -0.02em;
+            margin-bottom: 26px;
+            text-align: left;
+            line-height: 1.05;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .login-card {
+            display: grid;
+            gap: 10px;
+            padding: 14px 14px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: #f7f8ff;
+            margin-top: 12px;
+        }
+
+        .login-card label {
+            font-size: 13px;
+            color: #213f99;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 9px 11px;
+            border: 1px solid rgba(33, 63, 153, 0.22);
+            border-radius: 12px;
+            font-size: 14px;
+            background: #fff;
+            outline: none;
+        }
+
+        .login-card input:focus {
+            border-color: #213f99;
+            box-shadow: 0 0 0 3px rgba(33, 63, 153, 0.12);
+        }
+
+        .login-error {
+            min-height: 24px;
+            color: #b42318;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.35;
+            margin-top: 2px;
+        }
+
+        .right-title {
+            font-family: "Space Grotesk", "Helvetica Neue", sans-serif;
+            color: #213f99;
+            font-size: clamp(16px, 2.3vw, 21px);
+            letter-spacing: -0.01em;
+            text-align: left;
+            line-height: 1.1;
+        }
+
+        .right-subtitle {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: left;
+            margin-top: 2px;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(140deg, #213f99, var(--primary-strong));
+            color: #fff;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 999px;
+            box-shadow: 0 20px 40px rgba(33, 63, 153, 0.24);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: center;
+            margin-top: 8px;
+            width: 100%;
+            border: 2px solid #0f172a;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 24px 50px rgba(33, 63, 153, 0.3);
+        }
+
+        .cta-subtext {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        .footer-text strong {
+            color: #213f99;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 24px 12px;
+            }
+
+            .entry-shell {
+                padding: 22px 16px;
+            }
+
+            .title {
+                font-size: 26px;
+            }
+
+            .right-title {
+                font-size: 18px;
+            }
+
+            .right-subtitle {
+                font-size: 12px;
+            }
+
+            .login-card {
+                padding: 16px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="entry-shell">
+        <div class="brand">
+            <img src="/static/logo/dark-logo-min.png" alt="Srinithi Insurance Corporation Logo" class="logo" onerror="this.style.display='none'">
+        </div>
+        <h1 class="title">POSP Payout Checker</h1>
+        <h2 class="right-title">Secure Login</h2>
+        <p class="right-subtitle">Enter your user credentials to continue.</p>
+
+        <form action="/login" method="post" class="login-card">
+            <label for="user-id">User ID</label>
+            <input id="user-id" name="user_id" type="text" required>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required>
+            <button type="submit" class="cta-button">Login</button>
+            <div class="login-error">__LOGIN_ERROR__</div>
+        </form>
+    </div>
+</body>
+</html>
