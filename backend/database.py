@@ -53,12 +53,15 @@ _VEHICLE_TYPE_CANONICAL_MAP = {
     'digger and boring machine': 'Digger and Boring machine',
     'bacho loader': 'Backho Loader',
     'backho loader': 'Backho Loader',
+    'educational bus under school name': 'Educational Bus',
 }
 _VEHICLE_TYPE_VARIANTS = {
     'digger and boring machine': ['Digger and Boring machine', 'Digger & Boring machine'],
     'digger & boring machine': ['Digger and Boring machine', 'Digger & Boring machine'],
     'backho loader': ['Backho Loader', 'Bacho Loader'],
     'bacho loader': ['Backho Loader', 'Bacho Loader'],
+    'educational bus': ['Educational Bus', 'Educational Bus under school name'],
+    'educational bus under school name': ['Educational Bus', 'Educational Bus under school name'],
 }
 
 
@@ -634,6 +637,16 @@ def get_distinct_fuel_types(vehicle_type: str = None, category: str = None) -> L
                 # Return validated list if any valid fuels found, else return original
                 fuels = validated if validated else fuels
     
+    # Two Wheeler rule: allow only Petrol and EV.
+    category_norm = (category or "").strip().lower()
+    if "two wheeler" in category_norm:
+        allowed = []
+        for f in fuels:
+            fl = (f or "").strip().lower()
+            if fl in ("petrol", "ev"):
+                allowed.append(f)
+        fuels = allowed
+
     # Always add 'Others' option at the end
     if 'Others' not in fuels:
         fuels.append('Others')
@@ -672,18 +685,51 @@ def get_distinct_business_types(vehicle_type: str = None, fuel_type: str = None,
         if category:
             filters.append(('Vehicle_Category', category))
         values = _distinct_with_filters('Business_Type', filters)
-    # Business_Type blank in data means applicable to Old/Renewal/Rollover.
-    # Ensure these options are available in UI consistently.
-    must_have = ['Old', 'Renewal', 'Rollover']
-    seen = {str(v).strip().lower() for v in values}
-    for label in must_have:
-        if label.lower() not in seen:
-            values.append(label)
-    return sorted(values, key=lambda x: (x.lower(), x))
+    # Business_Type rule:
+    # - Only New / Old are valid UI options.
+    # - Blank in data is treated as Old (matching handled in get_top_5_payouts).
+    cleaned = []
+    seen = set()
+    for v in values:
+        sv = str(v).strip()
+        if not sv:
+            continue
+        low = sv.lower()
+        if low in ('renewal', 'rollover'):
+            sv = 'Old'
+            low = 'old'
+        if ',' in sv:
+            parts = [p.strip() for p in sv.split(',') if p.strip()]
+            for p in parts:
+                pl = p.lower()
+                if pl in ('renewal', 'rollover'):
+                    p = 'Old'
+                    pl = 'old'
+                if pl in ('new', 'old') and pl not in seen:
+                    seen.add(pl)
+                    cleaned.append('New' if pl == 'new' else 'Old')
+            continue
+        if low in ('new', 'old') and low not in seen:
+            seen.add(low)
+            cleaned.append('New' if low == 'new' else 'Old')
+
+    # Always keep both New and Old as UI options.
+    if 'new' not in seen:
+        cleaned.append('New')
+    if 'old' not in seen:
+        cleaned.append('Old')
+    return cleaned
 
 
 def get_distinct_vehicle_ages() -> List[str]:
-    return _distinct_from_raw('Vehicle_Age')
+    """Return UI vehicle-age options.
+
+    Current data is normalized with age_min/age_max, and many rows do not
+    carry raw Vehicle_Age text. The UI expects:
+    - New (special option)
+    - numeric ages (used to render model years in frontend)
+    """
+    return ['New'] + [str(i) for i in range(1, 51)]
 
 
 def get_distinct_cc_slabs(vehicle_type: str = None, fuel_type: str = None, category: str = None) -> List[str]:
@@ -694,13 +740,13 @@ def get_distinct_cc_slabs(vehicle_type: str = None, fuel_type: str = None, categ
     if not vehicle_type and not fuel_type and not category:
         return _distinct_single_values('CC_Slab', exclude_tokens=['no'])
     
-    # Check if this is a two-wheeler vehicle type
+    # Check if this is truly Two Wheeler context
     is_two_wheeler = False
     if vehicle_type:
         vt_lower = vehicle_type.lower().strip()
         two_wheeler_keywords = ('scooter', 'bike', 'motorcycle', 'motor cycle', 'two-wheeler', 'two wheeler', 'twowheeler', 'moped')
         is_two_wheeler = any(kw in vt_lower for kw in two_wheeler_keywords) or vt_lower == 'two wheeler'
-    if category and 'wheeler' in category.lower():
+    if category and 'two wheeler' in category.lower():
         is_two_wheeler = True
 
     filters = []
@@ -711,14 +757,51 @@ def get_distinct_cc_slabs(vehicle_type: str = None, fuel_type: str = None, categ
     if category:
         filters.append(('Vehicle_Category', category))
     slabs = _distinct_with_filters('CC_Slab', filters, exclude_tokens=['no'])
-    
-    # If filtered result is empty (only 'All' records), return vehicle-type-specific defaults or global CC slabs
+
+    # For non-two-wheeler categories (notably PCV Taxi), fuel-specific rows may be sparse.
+    # If no slabs found with fuel filter, retry with vehicle_type/category only.
+    if not slabs and fuel_type and (vehicle_type or category) and not is_two_wheeler:
+        fallback_filters = []
+        if vehicle_type:
+            fallback_filters.append(('Vehicle_Type', vehicle_type))
+        if category:
+            fallback_filters.append(('Vehicle_Category', category))
+        slabs = _distinct_with_filters('CC_Slab', fallback_filters, exclude_tokens=['no'])
+
+    # Two Wheeler: normalize labels and keep only valid CC bands for selected vehicle type context.
+    if is_two_wheeler:
+        norm_map = {
+            'below 75 cc': 'Below 75 CC',
+            'below 75': 'Below 75 CC',
+            '75 to 150 cc': '75 to 150 CC',
+            '75 to 150': '75 to 150 CC',
+            '150 to 350 cc': '150 to 350 CC',
+            '150 to 350': '150 to 350 CC',
+            'above 350 cc': 'Above 350 CC',
+            'above 350': 'Above 350 CC',
+        }
+        ordered = ['Below 75 CC', '75 to 150 CC', '150 to 350 CC', 'Above 350 CC']
+        seen = set()
+        normalized = []
+        for slab in slabs:
+            s = str(slab).strip()
+            if not s:
+                continue
+            # Split any accidental comma-combined values and normalize each token.
+            for token in [t.strip() for t in s.split(',') if t.strip()]:
+                key = token.lower()
+                mapped = norm_map.get(key)
+                if mapped and mapped not in seen:
+                    seen.add(mapped)
+                    normalized.append(mapped)
+        # Return normalized in fixed business-friendly order.
+        return [x for x in ordered if x in seen]
+
+    # If filtered result is empty, avoid leaking unrelated category slabs.
     if not slabs:
-        # For two-wheelers, return distinct CC slab values per insurance guidelines
-        if is_two_wheeler:
-            return ['Above 350 cc', '150 - 350 cc', 'Below 150 cc']
-        # For other vehicle types, fall back to global CC slabs
-        return _distinct_single_values('CC_Slab', exclude_tokens=['no'])
+        # For non-two-wheeler categories, do not return global CC slabs.
+        # This prevents Two-Wheeler ranges from appearing for other vehicle categories.
+        return []
     return slabs
 
 
@@ -1062,11 +1145,15 @@ def get_top_5_payouts(**filters) -> List[dict]:
     state = filters.get('state')
     if state and state != 'N/A':
         if state.lower() == 'others':
-            # 'Others' is a catch-all: matches all records that don't have a specific state
+            # 'Others' in UI means non-listed states.
+            # Match blank/null states and generic exclusion-style states (Except/Declined ...),
+            # but do not match specific explicit states like 'TN' or 'AP,TS'.
             where_clauses.append(
                 "(JSON_EXTRACT(r.raw_json, '$.State') IS NULL "
                 "OR TRIM(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(r.raw_json, '$.State')), '')) = '' "
-                "OR LOWER(TRIM(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(r.raw_json, '$.State')), ''))) IN ('null', 'none'))"
+                "OR LOWER(TRIM(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(r.raw_json, '$.State')), ''))) IN ('null', 'none') "
+                "OR LOWER(TRIM(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(r.raw_json, '$.State')), ''))) LIKE 'except %' "
+                "OR LOWER(TRIM(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(r.raw_json, '$.State')), ''))) LIKE 'declined %')"
             )
         else:
             # Use except/multi-value aware matching for State (supports 'Except X' patterns and comma-separated lists)
@@ -1139,13 +1226,17 @@ def get_top_5_payouts(**filters) -> List[dict]:
             # Enable allow_all for all comma-separated fields (so rows with field='All' will match any user selection)
             _comma_sep_match(jf, str(val).strip(), allow_all=True)
 
-    # Business_Type has a special rule:
-    # - blank in row means applicable to Old/Renewal/Rollover
+    # Business_Type special rule:
+    # - blank in row means applicable to Old only
     # - explicit values should match normally
+    # - renewal/rollover inputs are normalized to Old
     business_val = filters.get('business_type')
     if business_val and str(business_val).strip():
         selected = str(business_val).strip()
         selected_low = selected.lower()
+        if selected_low in ('renewal', 'rollover'):
+            selected = 'Old'
+            selected_low = 'old'
         key = _JSON_KEY_MAP['business_type']
         norm = f"CONCAT(',', REPLACE(REPLACE(TRIM(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(r.raw_json, '$.{key}')), '')), ', ', ','), ' ,', ','), ',')"
 
@@ -1156,7 +1247,7 @@ def get_top_5_payouts(**filters) -> List[dict]:
         )
         params.extend([selected, selected])
 
-        if selected_low in ('old', 'renewal', 'rollover'):
+        if selected_low == 'old':
             # For these values, blank business rows are also applicable.
             cond = (
                 f"(JSON_EXTRACT(r.raw_json, '$.{key}') IS NULL "
@@ -1245,9 +1336,38 @@ def get_top_5_payouts(**filters) -> List[dict]:
         except Exception:
             pass
 
-    # Numeric GVW: row with no range (No/NULL) matches any; row with range matches if user value in range
+    # GVW slab overlap matching:
+    # - UI sends gvw_slab as "min|max" (example: "25|40", "40|MAX")
+    # - Match rows whose [gvw_min, gvw_max] overlaps selected slab.
+    gvw_slab = filters.get('gvw_slab')
+    if gvw_slab and str(gvw_slab).strip():
+        try:
+            slab_raw = str(gvw_slab).strip()
+            parts = [p.strip() for p in slab_raw.split('|')]
+            if len(parts) == 2:
+                slab_min = float(parts[0])
+                slab_max = None if parts[1].upper() == 'MAX' else float(parts[1])
+
+                if slab_max is None:
+                    # Selected range is [slab_min, +inf)
+                    # Overlap with row range exists if row_max is NULL(open-ended) or row_max >= slab_min
+                    where_clauses.append(
+                        '(r.gvw_min IS NOT NULL AND (r.gvw_max IS NULL OR r.gvw_max >= %s))'
+                    )
+                    params.append(slab_min)
+                else:
+                    # Overlap between [row_min, row_max_or_inf] and [slab_min, slab_max]
+                    # row_min <= slab_max AND (row_max IS NULL OR row_max >= slab_min)
+                    where_clauses.append(
+                        '(r.gvw_min IS NOT NULL AND r.gvw_min <= %s AND (r.gvw_max IS NULL OR r.gvw_max >= %s))'
+                    )
+                    params.extend([slab_max, slab_min])
+        except Exception:
+            pass
+
+    # Numeric GVW fallback: if explicit numeric value provided, use point-in-range matching
     gvw = filters.get('gvw_value')
-    if gvw:
+    if gvw and not (gvw_slab and str(gvw_slab).strip()):
         try:
             gvw_num = float(gvw)
             vehicle_category_val = str(filters.get('vehicle_category') or '').strip().lower()

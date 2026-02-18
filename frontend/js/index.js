@@ -19,6 +19,25 @@ const PRIVATE_CAR_MODEL_MAP = {
   others: ["Chevrolet", "GM", "Obsolete Models", "Tavera"],
 };
 
+const GCV_4W_MODEL_MAP = {
+  tata: ["Ace", "Intra", "Magic", "Super Ace", "Xenon", "Tipper", "Truck", "Tanker"],
+  "tata motors": ["Ace", "Intra", "Magic", "Super Ace", "Xenon", "Tipper", "Truck", "Tanker"],
+  mahindra: ["Mahindra Jeeto", "Supro", "Yodha", "Tractor", "Tipper", "Truck", "Tanker"],
+  "mahindra & mahindra": ["Mahindra Jeeto", "Supro", "Yodha", "Tractor", "Tipper", "Truck", "Tanker"],
+  maruti: ["Super Carry"],
+  "maruti suzuki": ["Super Carry"],
+  ashok: ["Tipper", "Truck", "Tanker"],
+  others: ["Tipper", "Truck", "Tanker"],
+};
+
+const TWO_WHEELER_MAKE_CATEGORY_MAP = {
+  ather: "scooter",
+  bajaj: "both",
+  hero: "bike",
+  honda: "scooter",
+  piaggio: "scooter",
+};
+
 const form = document.getElementById("payout-form");
 const submitButton = form.querySelector('button[type="submit"]');
 
@@ -36,7 +55,7 @@ const el = {
   seatingCapacity: document.getElementById("seating-capacity"),
   trailer: document.getElementById("trailer"),
   vehicleAge: document.getElementById("vehicle-age"),
-  gvwValue: document.getElementById("gvw-value"),
+  gvwSlab: document.getElementById("gvw-slab-select"),
   businessType: document.getElementById("business-type"),
   policyType: document.getElementById("policy-type"),
 };
@@ -101,6 +120,15 @@ function isGcvThreeWheeler(value) {
   return n.includes("3 wheeler") || n.includes("3 wheeler goods");
 }
 
+function isPcvBusNoMakeModel(value) {
+  const n = norm(value);
+  return n.startsWith("educational bus") || n.startsWith("staff bus");
+}
+
+function isPcvTaxi(value) {
+  return norm(value) === "taxi";
+}
+
 function createOption(value, label) {
   const option = document.createElement("option");
   option.value = value;
@@ -113,6 +141,32 @@ function resetSelect(select, placeholderText) {
   select.appendChild(createOption("", placeholderText));
 }
 
+function getSelectableOptions(select) {
+  return Array.from(select.options || []).filter(
+    (opt) => !!opt.value && !opt.disabled && !opt.hidden
+  );
+}
+
+function hasOptionValue(select, value) {
+  return Array.from(select.options || []).some(
+    (opt) => !opt.hidden && !opt.disabled && opt.value === value
+  );
+}
+
+function restoreOrAutoSelect(select, previousValue = "") {
+  if (previousValue && hasOptionValue(select, previousValue)) {
+    select.value = previousValue;
+    return false;
+  }
+  if (select.value) return false;
+  const selectable = getSelectableOptions(select);
+  if (selectable.length === 1) {
+    select.value = selectable[0].value;
+    return true;
+  }
+  return false;
+}
+
 function setGroupVisible(groupEl, visible) {
   groupEl.style.display = visible ? "flex" : "none";
 }
@@ -123,17 +177,22 @@ function applyVehicleDetailFieldOrder() {
   const sectionBody = group.make?.parentElement;
   if (!sectionBody) return;
 
-  // Two Wheeler: Fuel Type first, then Make.
+  // Always keep Make before Model.
+  if (group.make && group.model && group.make.nextElementSibling !== group.model) {
+    sectionBody.insertBefore(group.make, group.model);
+  }
+
+  // Two Wheeler: Fuel Type first, then Make, then Model.
   if (isTW) {
-    if (group.fuel && group.make && group.fuel.nextElementSibling !== group.make) {
+    if (group.fuel && group.make) {
       sectionBody.insertBefore(group.fuel, group.make);
     }
     return;
   }
 
-  // Default order for other categories: Make before Fuel Type.
-  if (group.make && group.fuel && group.make.nextElementSibling !== group.fuel) {
-    sectionBody.insertBefore(group.make, group.fuel);
+  // Default order for other categories: Make, Model, then Fuel Type.
+  if (group.model && group.fuel) {
+    sectionBody.insertBefore(group.model, group.fuel);
   }
 }
 
@@ -154,12 +213,19 @@ function appendDistinctOptions(select, values, includeOthers = false) {
     ) {
       s = "Digger and Boring machine";
     }
+    if (
+      select === el.vehicleType &&
+      /^educational bus under school name$/i.test(raw)
+    ) {
+      s = "Educational Bus";
+    }
     if (!s) return;
     const key = s.toLowerCase();
     if (key.startsWith("except ") || key.startsWith("declined ")) return;
     if (seen.has(key)) return;
     seen.add(key);
-    select.appendChild(createOption(s, s));
+    let label = s;
+    select.appendChild(createOption(s, label));
   });
 
   if (includeOthers && !seen.has("others")) {
@@ -167,60 +233,149 @@ function appendDistinctOptions(select, values, includeOthers = false) {
   }
 }
 
+function parseCcSlabForSort(value) {
+  const s = (value || "").toString().trim().toLowerCase();
+  const num = (v) => Number(v);
+  let m = s.match(/^(?:up\s*to|upto|below)\s*(\d+(?:\.\d+)?)/i);
+  if (m) return { min: 0, max: num(m[1]) };
+  m = s.match(/^above\s*(\d+(?:\.\d+)?)/i);
+  if (m) return { min: num(m[1]), max: Number.POSITIVE_INFINITY };
+  m = s.match(/(\d+(?:\.\d+)?)\s*(?:to|-)\s*(\d+(?:\.\d+)?)/i);
+  if (m) return { min: num(m[1]), max: num(m[2]) };
+  m = s.match(/(\d+(?:\.\d+)?)/);
+  if (m) return { min: num(m[1]), max: num(m[1]) };
+  return { min: Number.POSITIVE_INFINITY, max: Number.POSITIVE_INFINITY };
+}
+
+function sortCcSlabsAscending(values) {
+  return [...(values || [])].sort((a, b) => {
+    const pa = parseCcSlabForSort(a);
+    const pb = parseCcSlabForSort(b);
+    if (pa.min !== pb.min) return pa.min - pb.min;
+    if (pa.max !== pb.max) return pa.max - pb.max;
+    return String(a).localeCompare(String(b));
+  });
+}
+
+function applyBusinessTypeDisplayLabels() {}
+
 function isBundlePolicyType(value) {
   const n = norm(value).replace(/\s+/g, "");
   return n === "bundle(1+3)" || n === "bundle(1+5)" || n === "bundle(5+5)";
 }
 
-function applyBusinessTypeRules() {
-  const age = (el.vehicleAge.value || "").toString().trim();
-  const policy = el.policyType.value || "";
-  const forceNew = age === "1" || isBundlePolicyType(policy);
-  const disallowNew = !!age && age !== "1" && !isBundlePolicyType(policy);
+function isSatpPolicyType(value) {
+  return norm(value).replace(/\s+/g, "") === "satp";
+}
 
-  if (!forceNew && !disallowNew) {
-    Array.from(el.businessType.options).forEach((opt) => {
-      opt.disabled = false;
-      opt.hidden = false;
-    });
-    return;
+function isVehicleAgeNew(value) {
+  const v = (value || "").toString().trim().toLowerCase();
+  return v === "new";
+}
+
+function normalizeMakeKey(value) {
+  return norm(value).replace(/\s+/g, " ").trim();
+}
+
+function setSelectLocked(selectEl, locked) {
+  if (!selectEl) return;
+  selectEl.dataset.locked = locked ? "true" : "false";
+  selectEl.style.pointerEvents = locked ? "none" : "auto";
+  selectEl.classList.toggle("select-locked", !!locked);
+  if (locked) {
+    selectEl.setAttribute("aria-readonly", "true");
+  } else {
+    selectEl.removeAttribute("aria-readonly");
+  }
+}
+
+function applyBusinessTypeRules(trigger = "auto") {
+  const initialAge = (el.vehicleAge.value || "").toString().trim();
+  const selectedBusinessNorm = norm(el.businessType.value || "");
+  const initialPolicy = el.policyType.value || "";
+  let bundleSelected = isBundlePolicyType(initialPolicy);
+
+  // User can start from Business Type or Policy Type:
+  // If business is New OR policy is Bundle, force Vehicle Age to New (or 1 fallback).
+  if (trigger !== "age" && (selectedBusinessNorm === "new" || bundleSelected) && !isVehicleAgeNew(initialAge)) {
+    const hasNewAge = Array.from(el.vehicleAge.options || []).some((o) => norm(o.value) === "new");
+    el.vehicleAge.value = hasNewAge ? "New" : "1";
   }
 
-  const options = Array.from(el.businessType.options);
-  let hasNew = false;
-  let newValue = "";
-  options.forEach((opt) => {
+  const finalAge = (el.vehicleAge.value || "").toString().trim();
+  const ageIsNew = isVehicleAgeNew(finalAge);
+  const policy = el.policyType.value || "";
+  bundleSelected = isBundlePolicyType(policy);
+  const ageNum = /^\d+$/.test(finalAge) ? Number(finalAge) : null;
+  const age16Plus = ageNum !== null && ageNum >= 16;
+
+  // Age rule: if age is not New Vehicle, hide all Bundle policy options.
+  const policyOptions = Array.from(el.policyType.options || []);
+  policyOptions.forEach((opt) => {
+    if (!opt.value) return;
+    const isBundle = isBundlePolicyType(opt.value);
+    const isSatp = isSatpPolicyType(opt.value);
+    const hideBundle = !ageIsNew && isBundle;
+    const hideByAge16Rule = age16Plus && !isSatp;
+    const hide = hideBundle || hideByAge16Rule;
+    opt.hidden = hide;
+    opt.disabled = hide;
+  });
+  const selectedOption = Array.from(el.policyType.options || []).find(
+    (opt) => opt.value === el.policyType.value
+  );
+  if (selectedOption && (selectedOption.hidden || selectedOption.disabled)) {
+    el.policyType.value = "";
+  }
+  if (age16Plus) {
+    const satpOption = Array.from(el.policyType.options || []).find(
+      (opt) => !opt.hidden && !opt.disabled && isSatpPolicyType(opt.value)
+    );
+    el.policyType.value = satpOption ? satpOption.value : "";
+  }
+  bundleSelected = isBundlePolicyType(el.policyType.value || "");
+
+  // Business rule:
+  // - Age = New Vehicle -> Business locked to New
+  // - Age = any numeric year -> Business locked to Old
+  // - Bundle selected -> Business locked to New
+  const ageSelected = finalAge !== "";
+  let forcedBusiness = null;
+  if (bundleSelected || ageIsNew) {
+    forcedBusiness = "new";
+  } else if (ageSelected) {
+    forcedBusiness = "old";
+  }
+
+  let forcedOptionValue = "";
+  Array.from(el.businessType.options).forEach((opt) => {
     const valueNorm = norm(opt.value);
     if (!opt.value) {
-      opt.disabled = true;
+      opt.disabled = !!forcedBusiness;
       return;
     }
-    if (valueNorm === "new") {
-      if (disallowNew) {
-        opt.disabled = true;
-        opt.hidden = true;
-      } else {
-        opt.disabled = false;
-        opt.hidden = false;
-        hasNew = true;
-        newValue = opt.value;
-      }
+    if (forcedBusiness) {
+      const keep = valueNorm === forcedBusiness;
+      opt.hidden = !keep;
+      opt.disabled = !keep;
+      if (keep) forcedOptionValue = opt.value;
     } else {
-      if (disallowNew) {
-        opt.disabled = false;
-        opt.hidden = false;
-      } else {
-        opt.disabled = true;
-        opt.hidden = true;
-      }
+      opt.hidden = false;
+      opt.disabled = false;
     }
   });
 
-  if (forceNew && hasNew) {
-    el.businessType.value = newValue;
-  } else if (disallowNew && norm(el.businessType.value) === "new") {
-    el.businessType.value = "";
+  if (forcedBusiness) {
+    el.businessType.value = forcedOptionValue || "";
   }
+
+  // Lock rules:
+  // 1) Age selected => Business locked to forced value.
+  // 2) Bundle policy => both Age and Business are locked.
+  const lockBusiness = !!forcedBusiness;
+  const lockAge = bundleSelected;
+  setSelectLocked(el.businessType, lockBusiness);
+  setSelectLocked(el.vehicleAge, lockAge);
 }
 
 function appendRtoOptions(select, rtoOptions) {
@@ -250,6 +405,9 @@ function showNoData(message) {
 function showRows(payouts) {
   results.message.style.display = "none";
   results.body.innerHTML = "";
+  const grouped = [];
+  const groupMap = new Map();
+
   payouts.forEach((payout, idx) => {
     const payoutValueRaw =
       payout.payout_percentage ?? payout.final_payout ?? payout.payout ?? 0;
@@ -271,8 +429,8 @@ function showRows(payouts) {
       [/\bAdditional\s+payout\s+2\.5%\b/gi, "Additional payout: 2.5%"],
       [/\bAge\s+upto\s+15\s+years\b/gi, "Vehicle age up to 15 years"],
       [/\bupto\s+15\s+years\b/gi, "Up to 15 years"],
-      [/\bAs\s+per\s+Approved\s+RTO,\s*Discount\s+below\s+85%\s*,\s*NCB\s+is\s+there\b/gi, "As per approved RTO, discount below 85%, NCB applicable"],
-      [/\bAs\s+per\s+Approved\s+RTO,\s*NO\s+NCB\b/gi, "As per approved RTO, no NCB"],
+      [/\bAs\s+per\s+Approved\s+RTO,\s*Discount\s+below\s+85%\s*,\s*NCB\s+is\s+there\b/gi, "As per approved RTO, discount below 85%, With NCB"],
+      [/\bAs\s+per\s+Approved\s+RTO,\s*NO\s+NCB\b/gi, "As per approved RTO, Without NCB"],
       [/\bAs\s+per\s+Approved\s+RTO\b/gi, "As per approved RTO"],
       [/\bAs\s+per\s+System\s+RTO\b/gi, "As per system RTO"],
       [/\bBelow\s+30\s+days\s*&\s*live\s+case\b/gi, "Break-in below 30 days (live case)"],
@@ -294,11 +452,13 @@ function showRows(payouts) {
       [/\bKerala\s+ID\b/gi, "Kerala ID only"],
       [/\bcommission\s+only\s+for\s+first\s+year\s+premium;\s*on\s+OD\b/gi, "Commission on OD, 1st-year premium only"],
       [/\bcommission\s+only\s+for\s+first\s+year\s+premium;\s*on\s+TP\b/gi, "Commission on TP, 1st-year premium only"],
-      [/\bCommission\s+on\s+OD\s*,\s*NCB\s+is\s+there\b/gi, "Commission on OD, NCB applicable"],
-      [/\bCommission\s+on\s+OD\s*,\s*NO\s+NCB\b/gi, "Commission on OD, no NCB"],
+      [/\bCommission\s+on\s+OD\s*,\s*NCB\s+is\s+there\b/gi, "Commission on OD, With NCB"],
+      [/\bCommission\s+on\s+OD\s*,\s*NO\s+NCB\b/gi, "Commission on OD, Without NCB"],
       [/\bCommission\s+on\s+OD,\s*No\s+Zero\s+Depreciation,\s*Upto\s+90%\s+Discount\b/gi, "Commission on OD, no Zero Depreciation, discount up to 90%"],
-      [/\bcommission\s+on\s+OD\b/gi, "Commission on OD only"],
-      [/\bcommission\s+on\s+TP\b/gi, "Commission on TP only"],
+      [/\bCommission\s+on\s+OD\s+only\b/gi, "Commission on OD"],
+      [/\bCommission\s+on\s+TP\s+only\b/gi, "Commission on TP"],
+      [/\bcommission\s+on\s+OD\b/gi, "Commission on OD"],
+      [/\bcommission\s+on\s+TP\b/gi, "Commission on TP"],
       [/\bCPA\s+is\s+not\s+mandatory\s+here\b/gi, "CPA is not mandatory"],
       [/\bCPA\s+mandatory\s+with\s+NO\s+Zero\s+depreciation\b/gi, "CPA is mandatory with no Zero Depreciation"],
       [/\bCPA\s+mandatory\b/gi, "CPA is mandatory"],
@@ -306,8 +466,10 @@ function showRows(payouts) {
       [/\bDiscount\s+45%\b/gi, "Discount: 45%"],
       [/\bDiscount\s+50%\b/gi, "Discount: 50%"],
       [/\bNCB\s*>\s*25%\s*,\s*Commission\s+on\s+OD\b/gi, "NCB above 25%, commission on OD"],
-      [/\bNCB\s+is\s+there\b/gi, "NCB applicable"],
-      [/\bNO\s+NCB\b/gi, "No NCB"],
+      [/\bNCB\s+is\s+there\b/gi, "With NCB"],
+      [/\bNCB\s+applicable\b/gi, "With NCB"],
+      [/\bNCB\s+not\s+applicable\b/gi, "Without NCB"],
+      [/\bNO\s+NCB\b/gi, "Without NCB"],
       [/\bWith\s+Zero\s+depreciation\b/gi, "With Zero Depreciation"],
       [/\bwith\s+No\s+Zero\s+depreciation\b/gi, "With no Zero Depreciation"],
       [/\bNo\s+Zero\s+Depreciation\s*\(76%\s*to\s*80%\)\b/gi, "No Zero Depreciation (76% to 80% discount)"],
@@ -332,15 +494,47 @@ function showRows(payouts) {
       condition = condition.replace(pattern, replacement);
     });
     const company = payout.company_name || payout.company || "Unknown";
-    const companyHtml = condition
-      ? `<strong>${company}</strong><div class="company-note">${condition}</div>`
-      : `<strong>${company}</strong>`;
+    const rank = payout.rank || idx + 1;
+    const key = `${rank}__${company.toLowerCase()}`;
+    if (!groupMap.has(key)) {
+      const entry = {
+        rank,
+        company,
+        lines: [],
+      };
+      grouped.push(entry);
+      groupMap.set(key, entry);
+    }
+    const entry = groupMap.get(key);
+    entry.lines.push({
+      condition,
+      payoutText,
+    });
+  });
+
+  grouped.forEach((entry) => {
+    const conditionedLines = entry.lines.filter((line) => !!line.condition);
+    const displayLines = conditionedLines.length > 0 ? conditionedLines : entry.lines;
+    const hasConditionBlock = conditionedLines.length > 0;
+
+    const conditionLines = displayLines
+      .map((line) => `<div class="company-note">${line.condition}</div>`)
+      .join("");
+    const payoutLines = displayLines
+      .map((line) => `<div class="payout-line">${line.payoutText}</div>`)
+      .join("");
+    const companyHtml = hasConditionBlock
+      ? `<div class="company-header"><strong>${entry.company}</strong></div><div class="company-lines">${conditionLines}</div>`
+      : `<div class="company-header"><strong>${entry.company}</strong></div>`;
+    const payoutHtml = hasConditionBlock
+      ? `<div class="payout-header-spacer"></div><div class="payout-lines">${payoutLines}</div>`
+      : `<div class="payout-lines">${payoutLines}</div>`;
 
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td class="table-rank">${payout.rank || idx + 1}</td>
+      <td class="table-rank">${entry.rank}</td>
       <td class="table-company">${companyHtml}</td>
-      <td class="table-payout">${payoutText}</td>
+      <td class="table-payout">${payoutHtml}</td>
     `;
     results.body.appendChild(row);
   });
@@ -367,11 +561,34 @@ async function populateCategories() {
 async function populateVehicleAges() {
   const data = await fetchJSON("/api/vehicle-ages");
   resetSelect(el.vehicleAge, "-- Choose Vehicle Age --");
-  appendDistinctOptions(el.vehicleAge, data.ages || [], false);
+  const rawAges = (data.ages || [])
+    .map((ageVal) => (ageVal || "").toString().trim())
+    .filter(Boolean);
+
+  const hasNew = rawAges.some((v) => v.toLowerCase() === "new");
+  if (hasNew) {
+    el.vehicleAge.appendChild(createOption("New", "New Vehicle"));
+  }
+
+  // UI display rule:
+  // Show years in descending order (currentYear-1, currentYear-2 ... currentYear-50),
+  // while keeping option values as numeric ages (1..50) for backend matching.
+  const currentYear = new Date().getFullYear();
+  const numericAges = rawAges
+    .filter((v) => /^\d+$/.test(v))
+    .map((v) => Number(v))
+    .filter((n) => Number.isFinite(n) && n >= 1 && n <= 50)
+    .sort((a, b) => a - b);
+
+  numericAges.forEach((age) => {
+    const labelYear = String(currentYear - age);
+    el.vehicleAge.appendChild(createOption(String(age), labelYear));
+  });
 }
 
 async function onStateChange() {
   const stateVal = el.state.value;
+  const prevRto = el.rtoNumber.value;
   selectedStateCode = "";
   el.rtoPrefix.textContent = "XX";
   resetSelect(el.rtoNumber, "-- Choose RTO --");
@@ -404,9 +621,12 @@ async function onStateChange() {
   Array.from(el.rtoNumber.options).forEach((opt) => {
     if (norm(opt.value) === "others") opt.remove();
   });
+  restoreOrAutoSelect(el.rtoNumber, prevRto);
 }
 
 async function reloadBusinessAndPolicy() {
+  const prevBusiness = el.businessType.value;
+  const prevPolicy = el.policyType.value;
   const vehicleType = el.vehicleType.value || "";
   const fuelType = el.fuelType.value || "";
   const category = el.vehicleCategory.value || "";
@@ -426,13 +646,20 @@ async function reloadBusinessAndPolicy() {
 
   resetSelect(el.businessType, "-- Choose Business Type --");
   appendDistinctOptions(el.businessType, businessData.business_types || []);
+  applyBusinessTypeDisplayLabels();
+  restoreOrAutoSelect(el.businessType, prevBusiness);
 
   resetSelect(el.policyType, "-- Choose Policy Type --");
   appendDistinctOptions(el.policyType, policyData.policies || []);
+  restoreOrAutoSelect(el.policyType, prevPolicy);
   applyBusinessTypeRules();
+  if (!el.businessType.value) restoreOrAutoSelect(el.businessType);
+  if (!el.policyType.value) restoreOrAutoSelect(el.policyType);
 }
 
 async function reloadMakesAndModels() {
+  const prevMake = el.make.value;
+  const prevModel = el.model.value;
   const category = el.vehicleCategory.value;
   const vehicleType = el.vehicleType.value;
   const fuelType = el.fuelType.value || "";
@@ -472,10 +699,29 @@ async function reloadMakesAndModels() {
       );
       makeValues = broadMakeData.makes || makeValues;
     }
+    // Two Wheeler EV make-category mapping:
+    // Bike -> BIKE/BOTH makes, Scooter -> SCOOTER/BOTH makes.
+    if (norm(fuelType) === "ev") {
+      const vt = norm(vehicleType);
+      if (vt === "bike" || vt === "scooter") {
+        makeValues = makeValues.filter((m) => {
+          const key = norm(m);
+          if (key === "others") return true;
+          const mkCat = TWO_WHEELER_MAKE_CATEGORY_MAP[key];
+          if (!mkCat) return false;
+          return mkCat === "both" || mkCat === vt;
+        });
+      }
+    }
   }
 
   resetSelect(el.make, "-- Choose Make --");
   appendDistinctOptions(el.make, makeValues, true);
+  const makeChanged = restoreOrAutoSelect(el.make, prevMake);
+  if (makeChanged && el.make.value) {
+    await reloadModelsByMake();
+    return;
+  }
 
   resetSelect(el.model, "-- Choose Model --");
   const modelData = await fetchJSON(
@@ -484,12 +730,16 @@ async function reloadMakesAndModels() {
     )}&category=${encodeURIComponent(category || "")}`
   );
   appendDistinctOptions(el.model, modelData.models || [], true);
+  restoreOrAutoSelect(el.model, prevModel);
+  if (!el.model.value) restoreOrAutoSelect(el.model);
 }
 
 async function reloadModelsByMake() {
+  const prevModel = el.model.value;
   const category = el.vehicleCategory.value;
   const isPrivateCar = isCategory(category, CATEGORY_KEYS.privateCar);
   const fuelType = el.fuelType.value || "";
+  const isGcv4W = isCategory(category, CATEGORY_KEYS.gcv) && isGcvFourWheeler(el.vehicleType.value);
   const showMakeModel =
     isCategory(category, CATEGORY_KEYS.twoWheeler) ||
     isCategory(category, CATEGORY_KEYS.privateCar) ||
@@ -501,16 +751,35 @@ async function reloadModelsByMake() {
   const vehicleType = el.vehicleType.value || "";
   resetSelect(el.model, "-- Choose Model --");
 
+  if (isGcv4W) {
+    const makeKey = normalizeMakeKey(make || "others");
+    const mapped = GCV_4W_MODEL_MAP[makeKey] || [];
+    if (mapped.length > 0) {
+      appendDistinctOptions(el.model, mapped, true);
+      restoreOrAutoSelect(el.model, prevModel);
+      if (!el.model.value) restoreOrAutoSelect(el.model);
+      return;
+    }
+    appendDistinctOptions(el.model, [], true);
+    restoreOrAutoSelect(el.model, prevModel);
+    if (!el.model.value) restoreOrAutoSelect(el.model);
+    return;
+  }
+
   if (isPrivateCar) {
     const makeKey = norm(make || "others");
     const exactModels = PRIVATE_CAR_MODEL_MAP[makeKey] || [];
     if (exactModels.length > 0) {
       appendDistinctOptions(el.model, exactModels, true);
+      restoreOrAutoSelect(el.model, prevModel);
+      if (!el.model.value) restoreOrAutoSelect(el.model);
       return;
     }
     // If make has no dedicated model list (Honda/Kia/Mahindra currently),
     // keep only 'Others' to avoid showing unrelated models.
     appendDistinctOptions(el.model, [], true);
+    restoreOrAutoSelect(el.model, prevModel);
+    if (!el.model.value) restoreOrAutoSelect(el.model);
     return;
   }
 
@@ -521,6 +790,8 @@ async function reloadModelsByMake() {
       )}&category=${encodeURIComponent(category || "")}`
     );
     appendDistinctOptions(el.model, allModelData.models || [], true);
+    restoreOrAutoSelect(el.model, prevModel);
+    if (!el.model.value) restoreOrAutoSelect(el.model);
     return;
   }
 
@@ -532,6 +803,8 @@ async function reloadModelsByMake() {
   const models = data.models || [];
   if (models.length > 0) {
     appendDistinctOptions(el.model, models, true);
+    restoreOrAutoSelect(el.model, prevModel);
+    if (!el.model.value) restoreOrAutoSelect(el.model);
     return;
   }
 
@@ -545,6 +818,8 @@ async function reloadModelsByMake() {
   const allModels = allModelData.models || [];
   if (allModels.length > 0) {
     appendDistinctOptions(el.model, allModels, true);
+    restoreOrAutoSelect(el.model, prevModel);
+    if (!el.model.value) restoreOrAutoSelect(el.model);
     return;
   }
   if (isPrivateCar) {
@@ -552,13 +827,19 @@ async function reloadModelsByMake() {
       `/api/makes?vehicle_type=${encodeURIComponent(vehicleType || "")}&category=${encodeURIComponent(category || "")}&fuel_type=${encodeURIComponent(fuelType)}`
     );
     appendDistinctOptions(el.model, makeData.makes || [], true);
+    restoreOrAutoSelect(el.model, prevModel);
+    if (!el.model.value) restoreOrAutoSelect(el.model);
     return;
   }
   appendDistinctOptions(el.model, [], true);
+  restoreOrAutoSelect(el.model, prevModel);
+  if (!el.model.value) restoreOrAutoSelect(el.model);
 }
 
 async function reloadFuelTypes() {
+  const prevFuel = el.fuelType.value;
   const category = el.vehicleCategory.value;
+  const isTwoWheeler = isCategory(category, CATEGORY_KEYS.twoWheeler);
   const needsFuel =
     isCategory(category, CATEGORY_KEYS.twoWheeler) ||
     isCategory(category, CATEGORY_KEYS.privateCar) ||
@@ -576,12 +857,25 @@ async function reloadFuelTypes() {
   Array.from(el.fuelType.options).forEach((opt) => {
     if (norm(opt.value) === "others") opt.remove();
   });
+  if (isTwoWheeler) {
+    Array.from(el.fuelType.options).forEach((opt) => {
+      if (!opt.value) return;
+      const fv = norm(opt.value);
+      if (fv !== "petrol" && fv !== "ev") opt.remove();
+    });
+  }
+  restoreOrAutoSelect(el.fuelType, prevFuel);
+  if (!el.fuelType.value) restoreOrAutoSelect(el.fuelType);
 }
 
 async function reloadSlabs() {
+  const prevCc = el.ccSlab.value;
+  const prevWatt = el.wattSlab.value;
   const category = el.vehicleCategory.value;
   const fuel = el.fuelType.value || "";
   const isEV = norm(fuel) === "ev";
+  const isAuto = isAutoVehicleType(el.vehicleType.value);
+  const isTwoWheeler = isCategory(category, CATEGORY_KEYS.twoWheeler);
   const needsSlab =
     isCategory(category, CATEGORY_KEYS.twoWheeler) ||
     isCategory(category, CATEGORY_KEYS.privateCar) ||
@@ -592,6 +886,10 @@ async function reloadSlabs() {
   resetSelect(el.ccSlab, "-- Choose CC Slab --");
   resetSelect(el.wattSlab, "-- Choose Watt Slab --");
 
+  // Auto rule: no CC/Watt slab in UI; Fuel Type alone decides payout branch.
+  if (isAuto) return;
+  // Two Wheeler rule: for EV, no slab input should be shown.
+  if (isTwoWheeler && isEV) return;
   if (!needsSlab || !fuel) return;
 
   const vehicleType = encodeURIComponent(el.vehicleType.value || "");
@@ -603,6 +901,8 @@ async function reloadSlabs() {
       `/api/watt-slabs?vehicle_type=${vehicleType}&fuel_type=${fuelType}&category=${encodeURIComponent(category || "")}`
     );
     appendDistinctOptions(el.wattSlab, data.watt_slabs || [], false);
+    restoreOrAutoSelect(el.wattSlab, prevWatt);
+    if (!el.wattSlab.value) restoreOrAutoSelect(el.wattSlab);
     return;
   }
 
@@ -610,7 +910,9 @@ async function reloadSlabs() {
   const data = await fetchJSON(
     `/api/cc-slabs?vehicle_type=${vehicleType}&fuel_type=${fuelType}&category=${encodeURIComponent(category || "")}`
   );
-  appendDistinctOptions(el.ccSlab, data.cc_slabs || [], false);
+  appendDistinctOptions(el.ccSlab, sortCcSlabsAscending(data.cc_slabs || []), false);
+  restoreOrAutoSelect(el.ccSlab, prevCc);
+  if (!el.ccSlab.value) restoreOrAutoSelect(el.ccSlab);
 }
 
 async function reloadSeating() {
@@ -620,6 +922,7 @@ async function reloadSeating() {
 }
 
 async function reloadTrailer() {
+  const prevTrailer = el.trailer.value;
   const category = el.vehicleCategory.value;
   const isMisc = isCategory(category, CATEGORY_KEYS.misc);
   const isTractor = norm(el.vehicleType.value) === "tractor";
@@ -632,6 +935,8 @@ async function reloadTrailer() {
     `/api/trailers?vehicle_type=${encodeURIComponent(el.vehicleType.value || "")}`
   );
   appendDistinctOptions(el.trailer, data.trailers || [], false);
+  restoreOrAutoSelect(el.trailer, prevTrailer);
+  if (!el.trailer.value) restoreOrAutoSelect(el.trailer);
 }
 
 function applyCategoryVisibility() {
@@ -644,17 +949,22 @@ function applyCategoryVisibility() {
   const isGCV = isCategory(category, CATEGORY_KEYS.gcv);
   const isFuelPicked = !!(el.fuelType.value || "").trim();
   const isAuto = isAutoVehicleType(el.vehicleType.value);
+  const isPcvBusType = isPCV && isPcvBusNoMakeModel(el.vehicleType.value);
+  const isPcvTaxiType = isPCV && isPcvTaxi(el.vehicleType.value);
+  const hidePcvFuel = isPcvBusType;
   const isGcvFlatbedType = isGCV && isGcvFlatbed(el.vehicleType.value);
   const isGcvThreeWheelerType = isGCV && isGcvThreeWheeler(el.vehicleType.value);
   const hideGcvMakeModel = isGcvFlatbedType || isGcvThreeWheelerType;
-  const showMake = ((isTW ? isFuelPicked : true) && (isTW || isPC || isPCV || isGCV)) && !hideGcvMakeModel;
-  const showModel = (isPC || isPCV || isGCV) && !isAuto && !hideGcvMakeModel;
+  const hideMakeModel = hideGcvMakeModel || isPcvBusType;
+  const hideOnlyMake = isPcvTaxiType;
+  const showMake = ((isTW ? isFuelPicked : true) && (isTW || isPC || isPCV || isGCV)) && !hideMakeModel && !hideOnlyMake;
+  const showModel = (isPC || isPCV || isGCV) && !isAuto && !hideMakeModel;
   const showGvw = isGCV && isGcvFourWheeler(el.vehicleType.value);
 
   setGroupVisible(group.vehicleType, isTW || isPCV || isMisc || isGCV);
   setGroupVisible(group.make, showMake);
   setGroupVisible(group.model, showModel);
-  setGroupVisible(group.fuel, isTW || isPC || isPCV);
+  setGroupVisible(group.fuel, (isTW || isPC || isPCV) && !hidePcvFuel);
   setGroupVisible(group.cc, false);
   setGroupVisible(group.watt, false);
   setGroupVisible(group.seating, false);
@@ -677,15 +987,30 @@ function applyCategoryVisibility() {
   if (isAuto) {
     el.model.value = "";
     el.seatingCapacity.value = "";
+    el.ccSlab.value = "";
+    el.wattSlab.value = "";
+    setGroupVisible(group.cc, false);
+    setGroupVisible(group.watt, false);
   }
-  if (!showMake) {
+  if (hidePcvFuel) {
+    el.fuelType.value = "";
+    el.ccSlab.value = "";
+    el.wattSlab.value = "";
+    setGroupVisible(group.cc, false);
+    setGroupVisible(group.watt, false);
+  }
+  if (!showMake && !isPcvTaxiType) {
     el.make.value = "";
   }
   if (!showModel) {
     el.model.value = "";
   }
   if (!showGvw) {
-    el.gvwValue.value = "";
+    el.gvwSlab.value = "";
+  }
+  if (!showMake || !showModel) {
+    if (!showMake) el.make.value = "";
+    if (!showModel) el.model.value = "";
   }
   if (isGCV || isMisc) {
     setGroupVisible(group.cc, false);
@@ -705,7 +1030,7 @@ async function onCategoryChange() {
   resetSelect(el.wattSlab, "-- Choose Watt Slab --");
   resetSelect(el.seatingCapacity, "-- Choose Seating Capacity --");
   resetSelect(el.trailer, "-- Choose Trailer --");
-  el.gvwValue.value = "";
+  if (el.gvwSlab) el.gvwSlab.value = "";
 
   if (!el.vehicleCategory.value) return;
 
@@ -716,23 +1041,49 @@ async function onCategoryChange() {
       `/api/vehicle-types?category=${encodeURIComponent(el.vehicleCategory.value)}`
     );
     appendDistinctOptions(el.vehicleType, typeData.types || [], false);
+    if (restoreOrAutoSelect(el.vehicleType)) {
+      await onVehicleTypeChange();
+    }
   } else {
     // still load make/fuel/policy options for private car even without sub-category
-    await reloadMakesAndModels();
     await reloadFuelTypes();
+    await reloadMakesAndModels();
     await reloadBusinessAndPolicy();
+    await reloadSlabs();
   }
 }
 
 async function onVehicleTypeChange() {
   applyCategoryVisibility();
-  await Promise.all([reloadMakesAndModels(), reloadFuelTypes(), reloadBusinessAndPolicy()]);
-  await Promise.all([reloadSlabs(), reloadSeating(), reloadTrailer()]);
+  await reloadFuelTypes();
+  await reloadMakesAndModels();
+  await reloadBusinessAndPolicy();
+  await reloadSlabs();
+  await reloadSeating();
+  await reloadTrailer();
 }
 
 async function onFuelTypeChange() {
+  const category = el.vehicleCategory.value;
+  const isTW = isCategory(category, CATEGORY_KEYS.twoWheeler);
+  const prevMake = el.make.value;
+  const prevModel = el.model.value;
+
   applyCategoryVisibility();
-  await Promise.all([reloadBusinessAndPolicy(), reloadSlabs(), reloadSeating(), reloadMakesAndModels()]);
+  const tasks = [reloadBusinessAndPolicy(), reloadSlabs(), reloadSeating()];
+  if (isTW) {
+    tasks.push(reloadMakesAndModels());
+  }
+  await Promise.all(tasks);
+
+  // For non-two-wheeler flows (PCV/Private Car/GCV/Misc), keep user make/model selection
+  // when fuel changes, as long as those options still exist in the dropdown.
+  if (!isTW) {
+    const makeExists = Array.from(el.make.options).some((o) => o.value === prevMake);
+    const modelExists = Array.from(el.model.options).some((o) => o.value === prevModel);
+    if (makeExists) el.make.value = prevMake;
+    if (modelExists) el.model.value = prevModel;
+  }
 }
 
 function validateForm() {
@@ -758,28 +1109,23 @@ function validateForm() {
   const isMisc = isCategory(category, CATEGORY_KEYS.misc);
   const isGCV = isCategory(category, CATEGORY_KEYS.gcv);
   const isAuto = isAutoVehicleType(el.vehicleType.value);
+  const isPcvBusType = isPCV && isPcvBusNoMakeModel(el.vehicleType.value);
+  const isPcvTaxiType = isPCV && isPcvTaxi(el.vehicleType.value);
+  const hidePcvFuel = isPcvBusType;
   const isGcvFlatbedType = isGCV && isGcvFlatbed(el.vehicleType.value);
   const isGcvThreeWheelerType = isGCV && isGcvThreeWheeler(el.vehicleType.value);
   const hideGcvMakeModel = isGcvFlatbedType || isGcvThreeWheelerType;
+  const hideMakeModel = hideGcvMakeModel || isPcvBusType;
+  const hideOnlyMake = isPcvTaxiType;
 
   if (isTW || isPCV || isMisc || isGCV) require(!!el.vehicleType.value, "Vehicle Type");
-  if ((isTW || isPC || isPCV || isGCV) && !hideGcvMakeModel) require(!!el.make.value, "Make");
+  if ((isTW || isPC || isPCV || isGCV) && !hideMakeModel && !hideOnlyMake) require(!!el.make.value, "Make");
   if ((isPC || isPCV) && !isAuto && group.model.style.display !== "none") {
     require(!!el.model.value, "Model");
   }
   if (isGCV && group.model.style.display !== "none") require(!!el.model.value, "Model");
-  if (isTW || isPC || isPCV) require(!!el.fuelType.value, "Fuel Type");
-  if (group.gvw.style.display !== "none") require(!!el.gvwValue.value, "GVW Slab (Ton)");
-  if (group.gvw.style.display !== "none" && el.gvwValue.value) {
-    const gvwNum = Number(el.gvwValue.value);
-    if (Number.isNaN(gvwNum) || gvwNum < 0 || gvwNum > 50) {
-      if (gvwNum > 50) {
-        missing.push("GVW highest is 50. If more than 50, enter 50.");
-      } else {
-        missing.push("GVW Slab (Ton) must be between 0 and 50");
-      }
-    }
-  }
+  if ((isTW || isPC || isPCV) && !hidePcvFuel) require(!!el.fuelType.value, "Fuel Type");
+  if (group.gvw.style.display !== "none") require(!!el.gvwSlab.value, "GVW Slab (Ton)");
   if (group.cc.style.display !== "none") require(!!el.ccSlab.value, "CC Slab");
   if (group.watt.style.display !== "none") require(!!el.wattSlab.value, "Watt Slab");
   if (group.seating.style.display !== "none") require(!!el.seatingCapacity.value, "Seating Capacity");
@@ -788,11 +1134,16 @@ function validateForm() {
   const age = (el.vehicleAge.value || "").toString().trim();
   const policy = el.policyType.value || "";
   const business = el.businessType.value || "";
-  if ((age === "1" || isBundlePolicyType(policy)) && norm(business) !== "new") {
-    missing.push("Business Type must be New for vehicle age 1 or Bundle policy");
+  const ageIsNew = isVehicleAgeNew(age);
+  if (ageIsNew && norm(business) !== "new") {
+    missing.push("Business Type must be New when Vehicle Age is New Vehicle");
   }
-  if (age && age !== "1" && norm(business) === "new" && !isBundlePolicyType(policy)) {
-    missing.push("Business Type cannot be New when Vehicle Age is not 1");
+  if (norm(business) === "new" && !ageIsNew) {
+    missing.push("Vehicle Age must be New Vehicle when Business Type is New");
+  }
+  if (isBundlePolicyType(policy)) {
+    if (!ageIsNew) missing.push("Vehicle Age must be New Vehicle for Bundle policy");
+    if (norm(business) !== "new") missing.push("Business Type must be New for Bundle policy");
   }
 
   return missing;
@@ -865,11 +1216,20 @@ async function init() {
   });
 
   el.vehicleAge.addEventListener("change", () => {
-    applyBusinessTypeRules();
+    applyBusinessTypeRules("age");
+  });
+
+  [el.vehicleAge, el.businessType].forEach((sel) => {
+    sel.addEventListener("keydown", (e) => {
+      if (sel.dataset.locked === "true") e.preventDefault();
+    });
   });
 
   el.policyType.addEventListener("change", () => {
-    applyBusinessTypeRules();
+    applyBusinessTypeRules("policy");
+  });
+  el.businessType.addEventListener("change", () => {
+    applyBusinessTypeRules("business");
   });
 
   form.addEventListener("submit", onSubmit);

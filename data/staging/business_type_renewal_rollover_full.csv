@@ -1,0 +1,15 @@
+﻿ID,Insurer,State,RTO_Code,Vehicle_Category,Vehicle_Type,Fuel_Type,Make,Model,CC_Slab,Watt_Slab,Policy_Type,Business_Type,Conditions,Date_from,Date_till,Vehicle_Age_Min,Vehicle_Age_Max,Final_Payout
+1575,Chola,"AP,TS",,Misc,Tractor,,,,,,Comprehensive(1+1),Renewal,CPA mandatory,,,,,38.71
+1576,Chola,"AP,TS",,Misc,Tractor,,,,,,SATP,Renewal,CPA mandatory,,,,,14.21
+1593,Universal,"AP,TS",,Misc,Tractor,,,,,,Comprehensive(1+1),"New,Rollover",,,,,,28.91
+1465,Chola,KA,,Misc,Tractor,,,,,,Comprehensive(1+1),Renewal,CPA mandatory,,,,,31.36
+1434,Universal,KL,,Misc,Tractor,,,,,,Comprehensive(1+1),Rollover,,,,,,14.21
+1510,Chola,TN,,Misc,Tractor,,,,,,Comprehensive(1+1),Renewal,CPA mandatory,,,,,25.97
+765,Royal,AP,,Private Car,,,,,,,Comprehensive(1+1),"Old,Rollover,Renewal",,,,,,6.86
+576,Royal,KA,"01,02,03,04,05,41,50,51,52,53,57,58,59,60,61",Private Car,,,,,,,Comprehensive(1+1),"Old,Rollover,Renewal",,,,,,13.72
+577,Royal,KA,"06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,42,43,44,45,46,47,48,49,63,64,65,66,67,68,69,70,71",Private Car,,,,,,,Comprehensive(1+1),"Old,Rollover,Renewal",,,,,,6.86
+529,Royal,KL,,Private Car,,,,,,,Comprehensive(1+1),"Old,Rollover,Renewal",,,,,,6.86
+666,Royal,TN,"01,02,03,04,05,06,07,09,10,11,12,13,14,22,85,37,38,40,41,66,99",Private Car,,,,,,,Comprehensive(1+1),"Old,Rollover,Renewal",,,,,,13.72
+667,Royal,TN,"15,16,18,19,20,21,23,24,25,28,29,30,31,32,33,34,36,39,42,43,45,46,47,48,49,50,51,52,54,55,56,57,58,59,60,61,63,64,65,67,68,69,70,72,73,74,75,76,77,78,79,81,82,83,84,86,87,88,90,91,92,93,94,95,96,97",Private Car,,,,,,,Comprehensive(1+1),"Old,Rollover,Renewal",,,,,,6.86
+766,Royal,TS,"09,10,11,12,13,14",Private Car,,,,,,,Comprehensive(1+1),"Old,Rollover,Renewal",,,,,,13.72
+767,Royal,TS,"01,02,03,04,05,06,07,08,15,16",Private Car,,,,,,,Comprehensive(1+1),"Old,Rollover,Renewal",,,,,,6.86

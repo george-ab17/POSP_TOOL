@@ -316,6 +316,24 @@ def _create_import_record(
     return import_id
 
 
+def _get_latest_import_id(conn: mysql.connector.MySQLConnection) -> Optional[int]:
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM imports ORDER BY id DESC LIMIT 1")
+    row = cur.fetchone()
+    cur.close()
+    if not row:
+        return None
+    return int(row[0])
+
+
+def _count_rates_for_import(conn: mysql.connector.MySQLConnection, import_id: int) -> int:
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM rates WHERE import_id = %s", (import_id,))
+    row = cur.fetchone()
+    cur.close()
+    return int(row[0] if row else 0)
+
+
 def _finish_import_record(
     conn: mysql.connector.MySQLConnection, import_id: int, row_count: int, status: str, notes: str
 ) -> None:
@@ -355,12 +373,15 @@ def _insert_rates_from_file(
     import_id: int,
     path: Path,
     rto_cache: Dict[str, int],
-) -> int:
+    update_existing_payouts: bool = False,
+    update_only: bool = False,
+) -> Tuple[int, int]:
     sheet, df = _first_non_empty_sheet(path)
     print(f"[IMPORT] {path.name} -> sheet={sheet}, rows={len(df)}")
 
     cur = conn.cursor()
     inserted = 0
+    updated = 0
 
     for _, row in df.iterrows():
         raw_json = _build_raw_json_row(row)
@@ -380,6 +401,54 @@ def _insert_rates_from_file(
 
         rto_cell = _as_clean_str(row.get("RTO_Code"))
         rto_rule = _parse_rto_rule(rto_cell)
+
+        if update_existing_payouts:
+            # Match existing row by full JSON payload except Final Payout.
+            # If found, update payout only (plus normalized helper fields).
+            cur.execute(
+                """
+                SELECT id
+                FROM rates
+                WHERE import_id = %s
+                  AND JSON_REMOVE(raw_json, '$."Final Payout"')
+                      = JSON_REMOVE(CAST(%s AS JSON), '$."Final Payout"')
+                LIMIT 1
+                """,
+                (import_id, json.dumps(raw_json, ensure_ascii=True)),
+            )
+            existing = cur.fetchone()
+            if existing:
+                existing_id = int(existing[0])
+                cur.execute(
+                    """
+                    UPDATE rates
+                    SET final_payout = %s,
+                        state_code = %s,
+                        condition_text = %s,
+                        age_min = %s,
+                        age_max = %s,
+                        gvw_min = %s,
+                        gvw_max = %s,
+                        raw_json = %s
+                    WHERE id = %s
+                    """,
+                    (
+                        final_payout,
+                        state_code,
+                        condition_text,
+                        age_min,
+                        age_max,
+                        gvw_min,
+                        gvw_max,
+                        json.dumps(raw_json, ensure_ascii=True),
+                        existing_id,
+                    ),
+                )
+                updated += 1
+                continue
+            if update_only:
+                # In strict payout-update mode, skip rows that don't already exist.
+                continue
 
         cur.execute(
             """
@@ -428,10 +497,15 @@ def _insert_rates_from_file(
 
     conn.commit()
     cur.close()
-    return inserted
+    return inserted, updated
 
 
-def import_excels(include_gcv: bool = False, replace_existing: bool = True) -> None:
+def import_excels(
+    include_gcv: bool = False,
+    replace_existing: bool = True,
+    update_existing_payouts: bool = False,
+    update_only: bool = False,
+) -> None:
     conn = _connect()
     try:
         _run_schema(conn)
@@ -446,13 +520,44 @@ def import_excels(include_gcv: bool = False, replace_existing: bool = True) -> N
         if include_gcv:
             files.append(GCV_FILE)
 
-        import_id = _create_import_record(conn, [p.name for p in files], uploaded_by="codex")
+        if update_existing_payouts and not replace_existing:
+            # Daily payout refresh mode: update against current active import batch.
+            latest = _get_latest_import_id(conn)
+            if latest is not None:
+                import_id = latest
+                print(f"[IMPORT] Using existing import_id={import_id} for payout updates")
+            else:
+                import_id = _create_import_record(conn, [p.name for p in files], uploaded_by="codex")
+        else:
+            import_id = _create_import_record(conn, [p.name for p in files], uploaded_by="codex")
         total_rows = 0
+        total_inserted = 0
+        total_updated = 0
         try:
             for file_path in files:
-                total_rows += _insert_rates_from_file(conn, import_id, file_path, rto_cache)
-            _finish_import_record(conn, import_id, total_rows, "completed", "Import completed")
-            print(f"[IMPORT] Completed. import_id={import_id}, rows={total_rows}")
+                inserted, updated = _insert_rates_from_file(
+                    conn,
+                    import_id,
+                    file_path,
+                    rto_cache,
+                    update_existing_payouts=update_existing_payouts,
+                    update_only=update_only,
+                )
+                total_inserted += inserted
+                total_updated += updated
+                total_rows += inserted + updated
+            final_row_count = _count_rates_for_import(conn, import_id)
+            _finish_import_record(
+                conn,
+                import_id,
+                final_row_count,
+                "completed",
+                f"Import completed (inserted={total_inserted}, updated={total_updated})",
+            )
+            print(
+                f"[IMPORT] Completed. import_id={import_id}, "
+                f"inserted={total_inserted}, updated={total_updated}, total={total_rows}"
+            )
         except Exception as exc:
             _finish_import_record(conn, import_id, total_rows, "failed", f"Import failed: {exc}")
             raise
@@ -472,9 +577,24 @@ def main() -> None:
         action="store_true",
         help="Append new import instead of replacing existing imported rows",
     )
+    parser.add_argument(
+        "--update-payouts",
+        action="store_true",
+        help="When a row already exists (same fields except Final Payout), update payout instead of creating duplicate rows.",
+    )
+    parser.add_argument(
+        "--update-only",
+        action="store_true",
+        help="With --update-payouts, update existing rows only and skip inserts for new rows.",
+    )
     args = parser.parse_args()
 
-    import_excels(include_gcv=args.include_gcv, replace_existing=not args.append)
+    import_excels(
+        include_gcv=args.include_gcv,
+        replace_existing=not args.append,
+        update_existing_payouts=args.update_payouts,
+        update_only=args.update_only,
+    )
 
 
 if __name__ == "__main__":

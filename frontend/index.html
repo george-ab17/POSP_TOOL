@@ -4,19 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POSP Payout Checker - Srinithi Insurance Corporation</title>
-    <link rel="stylesheet" href="/static/css/index.css?v=2">
+    <link rel="stylesheet" href="/static/css/index.css?v=12">
 </head>
 <body>
     <div class="page">
         <div class="container">
             <div class="header">
-                <div class="brand">
-                    <img src="/static/logo/dark-logo-min.png" alt="Srinithi Insurance Corporation Logo">
-                </div>
                 <div class="title-block">
                     <h1>POSP Payout Checker</h1>
                 </div>
-                <div aria-hidden="true"></div>
+                <div class="header-meta">
+                    <a href="/logout" class="logout-link">Logout</a>
+                </div>
             </div>
 
             <form action="/check-payout" method="post" id="payout-form">
@@ -117,16 +116,18 @@
                         </div>
 
                         <div class="form-group" id="gvw-group">
-                            <label for="gvw-value">GVW Slab (Ton)</label>
-                            <input
-                                type="number"
-                                id="gvw-value"
-                                name="gvw_value"
-                                min="0"
-                                max="50"
-                                step="0.001"
-                                placeholder="Enter GVW in ton"
-                            >
+                            <label for="gvw-slab-select">GVW Slab (Ton)</label>
+                            <select id="gvw-slab-select" name="gvw_slab">
+                                <option value="" selected>-- Choose GVW Slab --</option>
+                                <option value="0|2.5">0 to 2.5 Ton</option>
+                                <option value="2.5|3.5">2.5 to 3.5 Ton</option>
+                                <option value="3.5|7.5">3.5 to 7.5 Ton</option>
+                                <option value="7.5|12">7.5 to 12 Ton</option>
+                                <option value="12|20">12 to 20 Ton</option>
+                                <option value="20|25">20 to 25 Ton</option>
+                                <option value="25|40">25 to 40 Ton</option>
+                                <option value="40|MAX">40 to MAX Ton</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -151,7 +152,7 @@
                 </div>
 
                 <!-- Optional fields kept for backend compatibility -->
-                <input type="hidden" name="gvw_slab" id="gvw-slab" value="">
+                <input type="hidden" name="gvw_value" id="gvw-value" value="">
                 <input type="hidden" name="ncb_slab" id="ncb-slab" value="">
                 <input type="hidden" name="cpa_cover" id="cpa-cover" value="">
                 <input type="hidden" name="zero_dep" id="zero-dep" value="">
@@ -165,20 +166,22 @@
                 <div class="results-card">
                     <h3>Top 5 Insurers with Payout</h3>
                     <div id="results-message" style="display:none;"></div>
-                    <table id="results-table" class="results-table" style="display:none;">
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Insurance Company</th>
-                                <th class="text-right">Payouts(RP)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="results-body"></tbody>
-                    </table>
+                    <div class="table-wrap">
+                        <table id="results-table" class="results-table" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Insurance Company</th>
+                                    <th class="text-right">Payouts(RP)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-body"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="/static/js/index.js?v=12" defer></script>
+    <script src="/static/js/index.js?v=51" defer></script>
 </body>
 </html>

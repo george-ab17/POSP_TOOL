@@ -170,8 +170,8 @@ async def get_business_types(vehicle_type: str = None, fuel_type: str = None, ca
 @app.get("/api/vehicle-ages")
 async def get_vehicle_ages():
     """Get all vehicle ages"""
-    # Return numeric age choices 1..50 for the UI to select a specific age
-    ages = [str(i) for i in range(1, 51)]
+    # UI rule: show New first, then numeric ages 1..50
+    ages = ["New"] + [str(i) for i in range(1, 51)]
     return {"ages": ages}
 
 @app.get("/api/cc-slabs")
@@ -253,27 +253,75 @@ async def check_payout(
     """
     try:
         age_value = (vehicle_age or "").strip()
+        age_is_new = age_value.lower() == "new"
+        age_for_query = "1" if age_is_new else age_value
         policy_value = "".join((policy_type or "").strip().lower().split())
         business_value = (business_type or "").strip().lower()
+        if business_value in ("renewal", "rollover"):
+            business_type = "Old"
+            business_value = "old"
         is_bundle_policy = policy_value in ("bundle(1+3)", "bundle(1+5)", "bundle(5+5)")
-        if age_value and age_value != "1" and business_value == "new" and not is_bundle_policy:
+        category_value = (vehicle_category or "").strip().lower()
+        fuel_value = (fuel_type or "").strip().lower()
+        if "two wheeler" in category_value and fuel_value and fuel_value not in ("petrol", "ev"):
             return PayoutResponse(
                 status="error",
-                message="Business Type cannot be New when Vehicle Age is not 1.",
+                message="For Two Wheeler, Fuel Type must be Petrol or EV only.",
                 rto_code="",
                 top_3_payouts=[],
                 top_5_payouts=[],
                 total_companies=0
             )
-        if (age_value == "1" or is_bundle_policy) and business_value != "new":
+        if age_is_new and business_value != "new":
             return PayoutResponse(
                 status="error",
-                message="Business Type must be New when Vehicle Age is 1 or Policy Type is Bundle(1+3)/Bundle(1+5).",
+                message="Business Type must be New when Vehicle Age is New Vehicle.",
                 rto_code="",
                 top_3_payouts=[],
                 top_5_payouts=[],
                 total_companies=0
             )
+        if business_value == "new" and not age_is_new:
+            return PayoutResponse(
+                status="error",
+                message="Vehicle Age must be New Vehicle when Business Type is New.",
+                rto_code="",
+                top_3_payouts=[],
+                top_5_payouts=[],
+                total_companies=0
+            )
+        if not age_is_new and business_value != "old":
+            return PayoutResponse(
+                status="error",
+                message="When Vehicle Age is not New Vehicle, Business Type must be Old.",
+                rto_code="",
+                top_3_payouts=[],
+                top_5_payouts=[],
+                total_companies=0
+            )
+        if is_bundle_policy and (business_value != "new" or not age_is_new):
+            return PayoutResponse(
+                status="error",
+                message="For Bundle policy, Business Type must be New and Vehicle Age must be New Vehicle.",
+                rto_code="",
+                top_3_payouts=[],
+                top_5_payouts=[],
+                total_companies=0
+            )
+        if not age_is_new:
+            try:
+                age_num = int(age_for_query)
+            except Exception:
+                age_num = None
+            if age_num is not None and age_num >= 16 and policy_value != "satp":
+                return PayoutResponse(
+                    status="error",
+                    message="For vehicle age 16 years and above, Policy Type must be SATP only.",
+                    rto_code="",
+                    top_3_payouts=[],
+                    top_5_payouts=[],
+                    total_companies=0
+                )
 
         logger.debug(
             "Payout check request received: state=%s rto_number=%s vehicle_category=%s vehicle_type=%s fuel_type=%s policy_type=%s business_type=%s",
@@ -355,7 +403,7 @@ async def check_payout(
             vehicle_type=vehicle_type,
             fuel_type=fuel_type if fuel_type and fuel_type.lower() != 'others' else None,  # 'Others' → None (no filter)
             policy_type=policy_type,
-            vehicle_age=vehicle_age,
+            vehicle_age=age_for_query,
             business_type=business_type,
             vehicle_category=vehicle_category_code,
             cc_slab=cc_slab if cc_slab and cc_slab.lower() != 'others' else None,  # 'Others' → None (no filter)
